@@ -5,12 +5,14 @@
  */
 package driver;
 
+import gui_panels.LifeLinePanel;
 import java.awt.Color;
 import java.util.ArrayList;
 import javax.swing.JLabel;
 import javax.swing.Timer;
 import question.Question;
 import question.QuestionList;
+import question.QuestionTimer;
 
 /**
  * This class is used to control how a game will
@@ -22,17 +24,18 @@ public class PlayGame {
     
     /**
      * 
-     * @param timer, Timer, The current timer timing each question duration
-     * @param counter, int, The current timer / count of the 
-     * @param timerLabel 
+     * @param questionTimer
      * @return 
      */
-    private static ArrayList<Question> resetGame(Timer timer, Integer counter, JLabel timerLabel) {
+    public static ArrayList<Question> resetGame(QuestionTimer questionTimer, LifeLinePanel lifeLines) {
         // reset timer
-        counter = 60;
-        timer.stop();
-        timerLabel.setForeground(new Color(63, 255, 202));
-        timerLabel.setText(counter.toString());
+        questionTimer.resetCounter();
+        questionTimer.startTimer();
+        
+        // reset life lines to not used
+        lifeLines.getFiftyFiftyHelper().setIsUsed(false);
+        lifeLines.getAskTheAudienceHelper().setIsUsed(false);
+        lifeLines.getPhoneAFriendHelper().setIsUsed(false);
         
         // reset questions
         return getNewQuestions();

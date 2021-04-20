@@ -22,8 +22,8 @@ import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.Timer;
 import animation.CurrentPanel;
+import driver.PlayGame;
 import gui_components.WalkAwayButton;
 import question.QuestionTimer;
 
@@ -51,7 +51,7 @@ public class PlayGamePanel extends JPanel implements ActionListener {
         this.currentPanel = currentPanel;
         this.panelWidth = panelWidth;
         this.panelHeight = panelHeight;
-        setQuestions();
+        questions = PlayGame.getNewQuestions();
         currentQuestion = 0;
 
         // Initialise attributes for panels
@@ -67,7 +67,7 @@ public class PlayGamePanel extends JPanel implements ActionListener {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     if (!(answersPanel.getCorrectButton() == e.getSource())) {
-                        resetGame();
+                        resetPanel();
                         currentPanel.goToMainMenu();
                     } else {
                         answersPanel.setAnswers(questions.get(++currentQuestion).getAnswers());
@@ -99,7 +99,7 @@ public class PlayGamePanel extends JPanel implements ActionListener {
         walkAwayButton.getWalkAwayButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                resetGame();
+                resetPanel();
                 currentPanel.goToMainMenu();
             }
         });
@@ -156,23 +156,20 @@ public class PlayGamePanel extends JPanel implements ActionListener {
      * this helper method allows the game to be put back into its initial state
      * with new questions supplied
      */
-    private void resetGame() {
-        // reset timer
-        questionTimer.resetCounter();
-        questionTimer.stopTimer();
+    private void resetPanel() {
+        //Reset underlying values
+        questions = PlayGame.resetGame(questionTimer, lifeLinesPanel);
+        
+        //Reset timer styling
         timerLabel.setForeground(new Color(63, 255, 202));
         timerLabel.setText(questionTimer.getCounter().toString());
         
-        // reset questions
-        setQuestions();
+        //Reset question styling
         currentQuestion = 0;
         questionLabel.setText(questions.get(currentQuestion).getText());
         answersPanel.setAnswers(questions.get(currentQuestion).getAnswers());
         
-        // Reset life lines
-        lifeLinesPanel.getFiftyFiftyHelper().setIsUsed(false);
-        lifeLinesPanel.getAskTheAudienceHelper().setIsUsed(false);
-        lifeLinesPanel.getPhoneAFriendHelper().setIsUsed(false);
+        // Reset life lines styling
         lifeLinesPanel.resetLifeLineStyling(); 
     }
 
@@ -233,13 +230,6 @@ public class PlayGamePanel extends JPanel implements ActionListener {
                 currentAnswer.setText("");
             }
         }
-    }
-
-    /**
-     * Used to set new questions
-     */
-    public void setQuestions() {
-        questions = QuestionList.selectQuestions();
     }
 
     /**
