@@ -42,7 +42,7 @@ public class PlayGamePanel extends JPanel implements ActionListener {
     private final int INSIDE_PADDING = 20;
     private int panelWidth = 1280;
     private int panelHeight = 720;
-    private final Color BACKGROUND_COLOR = new Color(12, 15, 18);
+    private final Color BACKGROUND_COLOR = new Color(0, 0, 0);
     private final CurrentPanel currentPanel;
     private ArrayList<Question> questions;
     private int currentQuestion;
@@ -56,7 +56,7 @@ public class PlayGamePanel extends JPanel implements ActionListener {
 
         // Initialise attributes for panels
         walkAwayButton = new WalkAwayButton("Walk Away", new Dimension(100, 60), currentPanel);
-        lifeLinesPanel = new LifeLinePanel(new Dimension(380, 60), new Color(64, 64, 206), new Color(64, 206, 135), BACKGROUND_COLOR, new Color(206, 64, 64));
+        lifeLinesPanel = new LifeLinePanel(new Dimension(380, 60), new Color(64, 64, 206), new Color(64, 206, 135), BACKGROUND_COLOR, BACKGROUND_COLOR);
         answersPanel = new AnswerButtons(new Dimension((this.panelWidth - (2 * INSIDE_PADDING)), 320),
                 BACKGROUND_COLOR, new Color(64, 206, 135), new Color(255, 255, 255), INSIDE_PADDING, questions.get(currentQuestion).getAnswers());
 
@@ -159,18 +159,18 @@ public class PlayGamePanel extends JPanel implements ActionListener {
     private void resetPanel() {
         //Reset underlying values
         questions = PlayGame.resetGame(questionTimer, lifeLinesPanel);
-        
+
         //Reset timer styling
         timerLabel.setForeground(new Color(63, 255, 202));
         timerLabel.setText(questionTimer.getCounter().toString());
-        
+
         //Reset question styling
         currentQuestion = 0;
         questionLabel.setText(questions.get(currentQuestion).getText());
         answersPanel.setAnswers(questions.get(currentQuestion).getAnswers());
-        
+
         // Reset life lines styling
-        lifeLinesPanel.resetLifeLineStyling(); 
+        lifeLinesPanel.resetLifeLineStyling();
     }
 
     private void setLifeLineListeners() {

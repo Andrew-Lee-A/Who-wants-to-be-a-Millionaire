@@ -22,7 +22,7 @@ public class WalkAwayButton extends JPanel {
 
     private final JButton button;
     private final Color defaultBackground = new Color(64, 64, 206);
-    private final Color onHoverBackground = new Color(206, 64, 64);
+    private final Color onHoverBackground = new Color(205, 63, 72);
 
     public WalkAwayButton(String text, Dimension size, CurrentPanel currentPanel) {
         button = new JButton(text);

@@ -34,7 +34,7 @@ public class MainMenuPanel extends JPanel implements ActionListener {
     private QuestionTimer questionTimer;
     private Ball[] balls;
     private final int NUM_BALLS = 15;
-    private final Color BACKGROUND_COLOR = new Color(12, 15, 18);
+    private final Color BACKGROUND_COLOR = new Color(0, 0, 0);
     private final CurrentPanel currentPanel;
     
     public MainMenuPanel(Dimension size, CurrentPanel currentPanel, PlayGamePanel gamePanel, QuestionTimer questionTimer, String username) {
