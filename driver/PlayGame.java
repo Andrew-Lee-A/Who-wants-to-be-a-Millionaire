@@ -22,9 +22,9 @@ public class PlayGame {
     
     /**
      * 
-     * @param timer, The current timer timing each question duration
-     * @param counter
-     * @param timerLabel
+     * @param timer, Timer, The current timer timing each question duration
+     * @param counter, int, The current timer / count of the 
+     * @param timerLabel 
      * @return 
      */
     private static ArrayList<Question> resetGame(Timer timer, Integer counter, JLabel timerLabel) {

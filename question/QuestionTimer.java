@@ -10,7 +10,7 @@ import javax.swing.Timer;
  */
 public class QuestionTimer {
     private Integer counter;
-    private Timer timer;
+    private final Timer timer;
     
     public QuestionTimer(ActionListener al) {
         counter = 60;
