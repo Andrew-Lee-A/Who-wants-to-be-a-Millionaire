@@ -3,6 +3,7 @@ package game_db;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 import player.Player;
 
 /**
@@ -26,24 +27,45 @@ public class GameDBManager {
             System.err.println(e);
         }
     }
-    
+
     public static void disconnectFromDB() {
-        if(dbConnection == null) {
+        if (dbConnection == null) {
             return;
         }
-        
+
         try {
             dbConnection.close();
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             System.err.println(e);
         }
     }
-    
+
     public static Player fetchPlayer() {
         return null;
     }
-    
+
     public static void updateRecords(Player p) {
-        
+
+    }
+
+    /**
+     * This method should only be used if the tables in the db do not exist
+     */
+    public static void makeTables() {
+        try {
+            Statement statement = dbConnection.createStatement();
+            
+            // Create player table
+            String sqlStatement = "CREATE TABLE PLAYER (USERNAME VARCHAR(50), HIGHSCORE INT)";
+            statement.executeUpdate(sqlStatement);
+            
+            // Create highscore table to map different highscores to winnings
+            sqlStatement = "CREATE TABLE WINNINGS (SCORE INT, AMOUNT VARCHAR(50))";
+            statement.executeUpdate(sqlStatement);
+            
+            statement.close();
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
     }
 }

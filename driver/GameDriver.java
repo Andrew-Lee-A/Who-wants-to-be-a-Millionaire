@@ -11,6 +11,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 import animation.CurrentPanel;
+import game_db.GameDBManager;
 import gui_panels.MainMenuPanel;
 import gui_panels.PlayGamePanel;
 import player.Player;
