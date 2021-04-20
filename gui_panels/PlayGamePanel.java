@@ -25,6 +25,7 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 import animation.CurrentPanel;
 import gui_components.WalkAwayButton;
+import question.QuestionTimer;
 
 /**
  *
@@ -37,8 +38,7 @@ public class PlayGamePanel extends JPanel implements ActionListener {
     private AnswerButtons answersPanel;
     private JLabel questionLabel;
     private JLabel timerLabel;
-    private final Timer timer;
-    private Integer counter;
+    private final QuestionTimer questionTimer;
     private final int INSIDE_PADDING = 20;
     private int panelWidth = 1280;
     private int panelHeight = 720;
@@ -72,8 +72,8 @@ public class PlayGamePanel extends JPanel implements ActionListener {
                     } else {
                         answersPanel.setAnswers(questions.get(++currentQuestion).getAnswers());
                         questionLabel.setText(questions.get(currentQuestion).getText());
-                        counter = 60;
-                        timerLabel.setText(counter.toString());
+                        questionTimer.resetCounter();
+                        timerLabel.setText(questionTimer.getCounter().toString());
                     }
                 }
             });
@@ -89,8 +89,8 @@ public class PlayGamePanel extends JPanel implements ActionListener {
         questionLabel.setFont(new Font("", Font.BOLD, 26));
 
         // Creating the timer label
-        counter = 60;
-        timerLabel = new JLabel(counter.toString());
+        questionTimer = new QuestionTimer(this);
+        timerLabel = new JLabel(questionTimer.getCounter().toString());
         timerLabel.setForeground(new Color(63, 255, 202));
         timerLabel.setSize(100, 60);
         timerLabel.setFont(new Font("", Font.BOLD, 60));
@@ -122,14 +122,13 @@ public class PlayGamePanel extends JPanel implements ActionListener {
         super.add(answersPanel);
         super.add(questionLabel);
         super.add(timerLabel);
-        timer = new Timer(1000, this);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (counter > 0) {
-            counter--;
-            switch (counter) {
+        if (questionTimer.getCounter() > 0) {
+            questionTimer.decrementCounter();
+            switch (questionTimer.getCounter()) {
                 case 40:
                     timerLabel.setForeground(new Color(220, 255, 0));
                     break;
@@ -141,14 +140,14 @@ public class PlayGamePanel extends JPanel implements ActionListener {
                     break;
             }
 
-            timerLabel.setText(counter.toString());
+            timerLabel.setText(questionTimer.getCounter().toString());
         }
 
-        if (counter <= 0) {
-            timer.stop();
-            counter = 60;
+        if (questionTimer.getCounter() <= 0) {
+            questionTimer.stopTimer();
+            questionTimer.resetCounter();
             timerLabel.setForeground(new Color(63, 255, 202));
-            timerLabel.setText(counter.toString());
+            timerLabel.setText(questionTimer.getCounter().toString());
             currentPanel.goToMainMenu();
         }
     }
@@ -159,10 +158,10 @@ public class PlayGamePanel extends JPanel implements ActionListener {
      */
     private void resetGame() {
         // reset timer
-        counter = 60;
-        timer.stop();
+        questionTimer.resetCounter();
+        questionTimer.stopTimer();
         timerLabel.setForeground(new Color(63, 255, 202));
-        timerLabel.setText(counter.toString());
+        timerLabel.setText(questionTimer.getCounter().toString());
         
         // reset questions
         setQuestions();
@@ -174,8 +173,7 @@ public class PlayGamePanel extends JPanel implements ActionListener {
         lifeLinesPanel.getFiftyFiftyHelper().setIsUsed(false);
         lifeLinesPanel.getAskTheAudienceHelper().setIsUsed(false);
         lifeLinesPanel.getPhoneAFriendHelper().setIsUsed(false);
-        lifeLinesPanel.resetLifeLineStyling();
-        
+        lifeLinesPanel.resetLifeLineStyling(); 
     }
 
     private void setLifeLineListeners() {
@@ -245,12 +243,12 @@ public class PlayGamePanel extends JPanel implements ActionListener {
     }
 
     /**
-     * Used to get the timer
+     * Used to get the question timer object
      *
-     * @return Timer, returns the counters timer
+     * @return QuestionTimer, returns the question timer
      */
-    public Timer getCounterTImer() {
-        return timer;
+    public QuestionTimer getCounterTImer() {
+        return questionTimer;
     }
 
 }

@@ -15,6 +15,7 @@ import game_db.GameDBManager;
 import gui_panels.MainMenuPanel;
 import gui_panels.PlayGamePanel;
 import player.Player;
+import question.QuestionTimer;
 
 /**
  *
@@ -38,8 +39,8 @@ public class GameDriver {
 
         PlayGamePanel playGamePanel;
         playGamePanel = new PlayGamePanel(GAME_WIDTH, GAME_HEIGHT, currentPanel);
-        Timer counterTimer = playGamePanel.getCounterTImer();
-        MainMenuPanel mainMenuPanel = new MainMenuPanel(GAME_SIZE, currentPanel, playGamePanel, counterTimer, p.getUsername());
+        QuestionTimer questionTimer = playGamePanel.getCounterTImer();
+        MainMenuPanel mainMenuPanel = new MainMenuPanel(GAME_SIZE, currentPanel, playGamePanel, questionTimer, p.getUsername());
 
         selectedPanel.add(mainMenuPanel, "main menu");
         selectedPanel.add(playGamePanel, "play game");

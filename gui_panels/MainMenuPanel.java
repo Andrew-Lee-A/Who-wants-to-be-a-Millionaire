@@ -17,6 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 import animation.CurrentPanel;
+import question.QuestionTimer;
 
 /**
  * This class is used to display the GUI for the main menu of the game, allowing
@@ -30,18 +31,19 @@ public class MainMenuPanel extends JPanel implements ActionListener {
     private final Dimension MENU_BUTTON_SIZE = new Dimension(200, 65);
     private final JLabel welcomeLabel;
     private Timer ballTimer;
-    private Timer counterTimer;
+    private QuestionTimer questionTimer;
     private Ball[] balls;
     private final int NUM_BALLS = 15;
     private final Color BACKGROUND_COLOR = new Color(12, 15, 18);
     private final CurrentPanel currentPanel;
     
-    public MainMenuPanel(Dimension size, CurrentPanel currentPanel, PlayGamePanel gamePanel, Timer counterTimer, String username) {
+    public MainMenuPanel(Dimension size, CurrentPanel currentPanel, PlayGamePanel gamePanel, QuestionTimer questionTimer, String username) {
         this.currentPanel = currentPanel;
-        this.counterTimer = counterTimer;
+        this.questionTimer = questionTimer;
         // getting button panel
         mainMenuButtonPanel = new MainMenuButtonPanel(new Dimension((MENU_BUTTON_SIZE.width), size.height), MENU_BUTTON_SIZE, new Color(52, 12, 132), 
-                new Color(255, 255, 255), new Color(64, 64, 206), currentPanel, gamePanel, counterTimer);
+                new Color(255, 255, 255), new Color(64, 64, 206), currentPanel, gamePanel, questionTimer);
+        
         // set label
         welcomeLabel = new JLabel("Welcome, " + username);
         welcomeLabel.setFont(new Font("", Font.BOLD, 32));
