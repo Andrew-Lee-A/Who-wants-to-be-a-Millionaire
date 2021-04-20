@@ -14,7 +14,7 @@ public class GameDBManager {
 
     private final static String GAME_DB_USERNAME = "pdc";
     private final static String GAME_DB_PASSWORD = "pdc";
-    private final static String DB_URL = "jdbc:derby://localhost:1527/WhoWantsToBeAMillionaireDB; create=true";
+    private final static String DB_URL = "jdbc:derby:WhoWantsToBeAMillionaireDB; create=true";
     private static Connection dbConnection;
 
     public GameDBManager() {

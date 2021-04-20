@@ -25,6 +25,9 @@ public class GameDriver {
     private final static int GAME_HEIGHT = 720;
     private final static Dimension GAME_SIZE = new Dimension(GAME_WIDTH, GAME_HEIGHT);
     public static void main(String[] args) {
+//        GameDBManager.connectToDB();
+//        GameDBManager.makeTables();
+        
         Player p = new Player("Teng");
         
         CardLayout card = new CardLayout();
