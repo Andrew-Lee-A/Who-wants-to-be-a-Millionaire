@@ -5,7 +5,6 @@
  */
 package gui_panels;
 
-import animation.Ball;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -18,7 +17,6 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 import animation.CurrentPanel;
 import animation.MoneyRain;
-import java.awt.Graphics2D;
 import question.QuestionTimer;
 
 /**
