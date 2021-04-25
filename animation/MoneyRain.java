@@ -1,5 +1,9 @@
 package animation;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.util.Random;
 
 /**
@@ -8,7 +12,6 @@ import java.util.Random;
  * @author Rhys Van Rooyen, Student ID: 19049569
  */
 public class MoneyRain {
-
     private int x;
     private int y;
     private int dy;
@@ -16,9 +19,10 @@ public class MoneyRain {
     private final int HEIGHT_BOUND;
     private final int WIDTH_BOUND;
     private final String MONEY_SYMBOL; // i.e. $
+    private final int MONEY_SIZE = 32;
     private final static Random rand = new Random();
 
-    public MoneyRain(int yBoundary, int xBoundary, String moneySymbol) {
+    public MoneyRain(int xBoundary, int yBoundary, String moneySymbol) {
         HEIGHT_BOUND = yBoundary;
         WIDTH_BOUND = xBoundary;
         MONEY_SYMBOL = moneySymbol;
@@ -59,6 +63,17 @@ public class MoneyRain {
      */
     public int getY() {
         return y;
+    }
+    
+    public String getSymbol() {
+        return MONEY_SYMBOL;
+    }
+    
+    public void drawMoney(Graphics g) {
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setColor(Color.GREEN);
+        g2.setFont(new Font("BOLD", Font.BOLD, MONEY_SIZE));
+        g2.drawString(MONEY_SYMBOL, x, y);
     }
     
 }

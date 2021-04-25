@@ -17,6 +17,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 import animation.CurrentPanel;
+import animation.MoneyRain;
+import java.awt.Graphics2D;
 import question.QuestionTimer;
 
 /**
@@ -30,10 +32,9 @@ public class MainMenuPanel extends JPanel implements ActionListener {
     JPanel mainMenuButtonPanel;
     private final Dimension MENU_BUTTON_SIZE = new Dimension(200, 65);
     private final JLabel welcomeLabel;
-    private Timer ballTimer;
+    private final Timer moneyTimer;
     private QuestionTimer questionTimer;
-    private Ball[] balls;
-    private final int NUM_BALLS = 15;
+    private final MoneyRain[] moneyRain; private final int NUM_DOLLARS = 100;
     private final Color BACKGROUND_COLOR = new Color(0, 0, 0);
     private final CurrentPanel currentPanel;
     
@@ -50,12 +51,12 @@ public class MainMenuPanel extends JPanel implements ActionListener {
         welcomeLabel.setForeground(new Color(64, 64, 206));
 
         // set up background balls
-        ballTimer = new Timer(10, this);
-        ballTimer.start();
-        balls = new Ball[NUM_BALLS];
+        moneyTimer = new Timer(10, this);
+        moneyTimer.start();
         
-        for(int i = 0; i < NUM_BALLS; i++) {
-            balls[i] = new Ball(size.width, size.height, 50);
+        moneyRain = new MoneyRain[NUM_DOLLARS];
+        for(int i = 0; i < NUM_DOLLARS; i++) {
+            moneyRain[i] = new MoneyRain(size.width, size.height, "$");
         }
 
         // styling this panel
@@ -69,15 +70,15 @@ public class MainMenuPanel extends JPanel implements ActionListener {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        for(Ball b : balls) {
-            b.drawBall(g);
+        for(MoneyRain m : moneyRain) {
+            m.drawMoney(g);
         }
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        for(Ball b : balls) {
-            b.updateDisplacement();
+        for(MoneyRain m: moneyRain) {
+            m.moveMoney();
         }
         super.repaint();
     }
