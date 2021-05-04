@@ -51,13 +51,7 @@ public class MainMenuButtonPanel extends JPanel {
         allButtons[3].addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Player p = GameDBManager.doesPlayerExist(gameState.getPlayer());
-                
-                if(p == null) {
-                    GameDBManager.updateRecords(p, true);
-                } else {
-                    GameDBManager.updateRecords(p, false);
-                }
+                gameState.updateRecords();
                 System.exit(0);
             }
         });

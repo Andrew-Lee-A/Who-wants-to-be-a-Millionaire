@@ -1,53 +1,74 @@
 package animation;
 
+import game_db.GameDBManager;
 import java.awt.CardLayout;
 import javax.swing.JPanel;
 import player.Player;
 
 /**
- * This class is used to model the current state of the game, i.e.
- * the player and their current score, the current panel or screen
- * the game is at... etc
+ * This class is used to model the current state of the game, i.e. the player
+ * and their current score, the current panel or screen the game is at... etc
+ *
  * @author Rhys Van Rooyen, Student ID: 19049569
  */
 public class GameState {
+
     private final JPanel selectedPanel;
     private final CardLayout cardLayout;
-    private String login; private String mainMenu; private String playGame;
-    private String highscores; private String rules;
+    private String login;
+    private String mainMenu;
+    private String playGame;
+    private String highscores;
+    private String rules;
     private Player p;
-    
+
     public GameState(JPanel selectedPanel, CardLayout cardLayout) {
         this.selectedPanel = selectedPanel;
         this.cardLayout = cardLayout;
-        
+
         // set all the panel identifies to blank at first
         this.login = "";
         this.mainMenu = "";
         this.playGame = "";
         this.highscores = "";
         this.rules = "";
-        
+
         // set player to null on creation
         this.p = null;
     }
-    
+
+    /**
+     * This method is used to update the records in the db depending on if a
+     * player exists or not within the db.
+     */
+    public void updateRecords() {
+        Player doesExist = GameDBManager.doesPlayerExist(p);
+
+        if (doesExist == null) {
+            GameDBManager.updateRecords(p, true);
+        } else {
+            if (p.getCurrentHighscore() > doesExist.getCurrentHighscore()) {
+                GameDBManager.updateRecords(p, false);
+            }
+        }
+    }
+
     public void goToMainMenu() {
         cardLayout.show(selectedPanel, getMainMenu());
     }
-    
+
     public void goToPlayGame() {
         cardLayout.show(selectedPanel, getPlayGame());
     }
-    
+
     public void goToLogin() {
         cardLayout.show(selectedPanel, getLogin());
     }
-    
+
     public void goToHighscores() {
         cardLayout.show(selectedPanel, getHighscores());
     }
-    
+
     public void goToRules() {
         cardLayout.show(selectedPanel, getRules());
     }

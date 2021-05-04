@@ -94,11 +94,12 @@ public class UsernameField extends JPanel {
                     currentPanel.goToMainMenu();
                     GameDBManager.updateRecords(p, true);
                 } else { // returning player
-                    overwriteData = JOptionPane.showOptionDialog(component, "Username found... WARNING Highscore will be overwritten after a game is played, continue?",
+                    overwriteData = JOptionPane.showOptionDialog(component, "Username found... WARNING your highscore will be overwriten if you achieve a higher score, continue?",
                             "WARNING", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, new String[]{"Continue", "Cancel"}, JOptionPane.YES_OPTION);
     
                     if (overwriteData == JOptionPane.YES_OPTION) {
                         //change the state of the game
+                        p.setHighscore(0);
                         currentPanel.setPlayer(p);
                         currentPanel.goToMainMenu();
                     }

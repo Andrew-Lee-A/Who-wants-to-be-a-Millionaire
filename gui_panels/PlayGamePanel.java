@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package gui_panels;
 
 import gui_components.AnswerButtons;
@@ -23,8 +18,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import animation.GameState;
 import driver.PlayGame;
-import game_db.GameDBManager;
 import gui_components.WalkAwayButton;
+import player.Player;
 import question.QuestionTimer;
 
 /**
@@ -46,6 +41,7 @@ public class PlayGamePanel extends JPanel implements ActionListener {
     private final GameState gameState;
     private ArrayList<Question> questions;
     private int currentQuestion;
+    private final Color INTIAL_TIMER_COLOR = new Color(63, 255, 202);
 
     public PlayGamePanel(int panelWidth, int panelHeight, GameState gameState) {
         this.gameState = gameState;
@@ -66,15 +62,19 @@ public class PlayGamePanel extends JPanel implements ActionListener {
             questionButtons[i].addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    if (!(answersPanel.getCorrectButton() == e.getSource())) {
+                    if (!(answersPanel.getCorrectButton() == e.getSource())) { // exit the game
                         resetPanel();
-                        GameDBManager.updateRecords(gameState.getPlayer(), false);
+                        gameState.updateRecords();
                         gameState.goToMainMenu();
-                    } else {
+                    } else { // increment score and change the question
                         answersPanel.setAnswers(questions.get(++currentQuestion).getAnswers());
                         questionLabel.setText(questions.get(currentQuestion).getText());
                         questionTimer.resetCounter();
                         timerLabel.setText(questionTimer.getCounter().toString());
+                        timerLabel.setForeground(INTIAL_TIMER_COLOR);
+                        
+                        Player p = gameState.getPlayer();
+                        p.setHighscore(p.getCurrentHighscore() + 1);
                     }
                 }
             });
@@ -92,7 +92,7 @@ public class PlayGamePanel extends JPanel implements ActionListener {
         // Creating the timer label
         questionTimer = new QuestionTimer(this);
         timerLabel = new JLabel(questionTimer.getCounter().toString());
-        timerLabel.setForeground(new Color(63, 255, 202));
+        timerLabel.setForeground(INTIAL_TIMER_COLOR);
         timerLabel.setSize(100, 60);
         timerLabel.setFont(new Font("", Font.BOLD, 60));
 
@@ -101,7 +101,7 @@ public class PlayGamePanel extends JPanel implements ActionListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 resetPanel();
-                GameDBManager.updateRecords(gameState.getPlayer(), false);
+                gameState.updateRecords();
                 gameState.goToMainMenu();
             }
         });
@@ -148,10 +148,10 @@ public class PlayGamePanel extends JPanel implements ActionListener {
         if (questionTimer.getCounter() <= 0) {
             questionTimer.stopTimer();
             questionTimer.resetCounter();
-            timerLabel.setForeground(new Color(63, 255, 202));
+            timerLabel.setForeground(INTIAL_TIMER_COLOR);
             timerLabel.setText(questionTimer.getCounter().toString());
             
-            GameDBManager.updateRecords(gameState.getPlayer(), false);
+            gameState.updateRecords();
             gameState.goToMainMenu();
         }
     }
@@ -165,7 +165,7 @@ public class PlayGamePanel extends JPanel implements ActionListener {
         questions = PlayGame.resetGame(questionTimer, lifeLinesPanel);
 
         //Reset timer styling
-        timerLabel.setForeground(new Color(63, 255, 202));
+        timerLabel.setForeground(INTIAL_TIMER_COLOR);
         timerLabel.setText(questionTimer.getCounter().toString());
 
         //Reset question styling

@@ -16,22 +16,22 @@ import javax.swing.SwingConstants;
 public class LoginPanel extends JPanel {
     private final JLabel warning;
     private final UsernameField enterUsername;
-    private final GameState currentPanel;
+    private final GameState gameState;
     
-    public LoginPanel(int width, int height, GameState currentPanel, Color backgroundColor) {
+    public LoginPanel(int width, int height, GameState gameState, Color backgroundColor) {
         // create warning label
-        warning = new JLabel("Warning, if a username that already exists is entered all information related to that username will be overwritten after a game"
-                + " has been played!", SwingConstants.CENTER);
+        warning = new JLabel("Warning, if a username that already exists is entered the "
+                + "high score will be overwriten if you achieve a higher score!", SwingConstants.CENTER);
         warning.setSize(500, 100);
         warning.setFont(new Font("", Font.PLAIN, 16));
         Color redText = new Color(213, 53, 42);
         warning.setForeground(redText);
         
         // set the currentPanel used for changing panels
-        this.currentPanel = currentPanel;
+        this.gameState = gameState;
         
         // create the username entry field
-        enterUsername = new UsernameField(width, height, currentPanel, backgroundColor, redText);
+        enterUsername = new UsernameField(width, height, gameState, backgroundColor, redText);
         
         BorderLayout bl = new BorderLayout();
         bl.setVgap(250);
