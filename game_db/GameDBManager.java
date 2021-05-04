@@ -88,8 +88,8 @@ public class GameDBManager {
      * from the records, and re insert them. Otherwise it will just insert the
      * player;
      *
-     * @param p, type Player, the player to insert
-     * @param newPlayer, type boolean, represents if the player has been entered before
+     * @param p type Player, the player to insert
+     * @param newPlayer a boolean representing if the player is new
      */
     public static void updateRecords(Player p, boolean newPlayer) {
         try {

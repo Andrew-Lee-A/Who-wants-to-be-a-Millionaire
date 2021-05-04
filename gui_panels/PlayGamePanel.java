@@ -6,7 +6,6 @@
 package gui_panels;
 
 import gui_components.AnswerButtons;
-import question.QuestionList;
 import question.Answer;
 import question.Question;
 import life_lines.PhoneAFriend;
@@ -24,6 +23,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import animation.GameState;
 import driver.PlayGame;
+import game_db.GameDBManager;
 import gui_components.WalkAwayButton;
 import question.QuestionTimer;
 
@@ -43,19 +43,19 @@ public class PlayGamePanel extends JPanel implements ActionListener {
     private int panelWidth = 1280;
     private int panelHeight = 720;
     private final Color BACKGROUND_COLOR = new Color(0, 0, 0);
-    private final GameState currentPanel;
+    private final GameState gameState;
     private ArrayList<Question> questions;
     private int currentQuestion;
 
-    public PlayGamePanel(int panelWidth, int panelHeight, GameState currentPanel) {
-        this.currentPanel = currentPanel;
+    public PlayGamePanel(int panelWidth, int panelHeight, GameState gameState) {
+        this.gameState = gameState;
         this.panelWidth = panelWidth;
         this.panelHeight = panelHeight;
         questions = PlayGame.getNewQuestions();
         currentQuestion = 0;
 
         // Initialise attributes for panels
-        walkAwayButton = new WalkAwayButton("Walk Away", new Dimension(100, 60), currentPanel);
+        walkAwayButton = new WalkAwayButton("Walk Away", new Dimension(100, 60), gameState);
         lifeLinesPanel = new LifeLinePanel(new Dimension(380, 60), new Color(64, 64, 206), new Color(64, 206, 135), BACKGROUND_COLOR, BACKGROUND_COLOR);
         answersPanel = new AnswerButtons(new Dimension((this.panelWidth - (2 * INSIDE_PADDING)), 320),
                 BACKGROUND_COLOR, new Color(64, 206, 135), new Color(255, 255, 255), INSIDE_PADDING, questions.get(currentQuestion).getAnswers());
@@ -68,7 +68,8 @@ public class PlayGamePanel extends JPanel implements ActionListener {
                 public void actionPerformed(ActionEvent e) {
                     if (!(answersPanel.getCorrectButton() == e.getSource())) {
                         resetPanel();
-                        currentPanel.goToMainMenu();
+                        GameDBManager.updateRecords(gameState.getPlayer(), false);
+                        gameState.goToMainMenu();
                     } else {
                         answersPanel.setAnswers(questions.get(++currentQuestion).getAnswers());
                         questionLabel.setText(questions.get(currentQuestion).getText());
@@ -100,7 +101,8 @@ public class PlayGamePanel extends JPanel implements ActionListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 resetPanel();
-                currentPanel.goToMainMenu();
+                GameDBManager.updateRecords(gameState.getPlayer(), false);
+                gameState.goToMainMenu();
             }
         });
 
@@ -148,7 +150,9 @@ public class PlayGamePanel extends JPanel implements ActionListener {
             questionTimer.resetCounter();
             timerLabel.setForeground(new Color(63, 255, 202));
             timerLabel.setText(questionTimer.getCounter().toString());
-            currentPanel.goToMainMenu();
+            
+            GameDBManager.updateRecords(gameState.getPlayer(), false);
+            gameState.goToMainMenu();
         }
     }
 

@@ -14,7 +14,9 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import animation.GameState;
+import game_db.GameDBManager;
 import gui_components.MainMenuButton;
+import player.Player;
 import question.QuestionTimer;
 
 /**
@@ -28,7 +30,7 @@ public class MainMenuButtonPanel extends JPanel {
     private final JButton[] allButtons;
 
     public MainMenuButtonPanel(Dimension size, Dimension buttonSize, Color backgroundColor,
-            Color defaultButtonColor, Color onHoverColor, GameState currentPanel, PlayGamePanel gamePanel, QuestionTimer questionTimer) {
+            Color defaultButtonColor, Color onHoverColor, GameState gameState, PlayGamePanel gamePanel, QuestionTimer questionTimer) {
         
         allButtons = new JButton[NUM_BUTTONS];
         allButtons[0] = MainMenuButton.createMenuButton("Play", buttonSize, defaultButtonColor, onHoverColor);
@@ -41,7 +43,7 @@ public class MainMenuButtonPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 questionTimer.startTimer();
-                currentPanel.goToPlayGame();
+                gameState.goToPlayGame();
             }
         });
 
@@ -49,6 +51,13 @@ public class MainMenuButtonPanel extends JPanel {
         allButtons[3].addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                Player p = GameDBManager.doesPlayerExist(gameState.getPlayer());
+                
+                if(p == null) {
+                    GameDBManager.updateRecords(p, true);
+                } else {
+                    GameDBManager.updateRecords(p, false);
+                }
                 System.exit(0);
             }
         });
