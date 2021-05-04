@@ -13,7 +13,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import animation.CurrentPanel;
+import animation.GameState;
 import gui_components.MainMenuButton;
 import question.QuestionTimer;
 
@@ -28,7 +28,7 @@ public class MainMenuButtonPanel extends JPanel {
     private final JButton[] allButtons;
 
     public MainMenuButtonPanel(Dimension size, Dimension buttonSize, Color backgroundColor,
-            Color defaultButtonColor, Color onHoverColor, CurrentPanel currentPanel, PlayGamePanel gamePanel, QuestionTimer questionTimer) {
+            Color defaultButtonColor, Color onHoverColor, GameState currentPanel, PlayGamePanel gamePanel, QuestionTimer questionTimer) {
         
         allButtons = new JButton[NUM_BUTTONS];
         allButtons[0] = MainMenuButton.createMenuButton("Play", buttonSize, defaultButtonColor, onHoverColor);

@@ -89,15 +89,16 @@ public class GameDBManager {
      * player;
      *
      * @param p, type Player, the player to insert
+     * @param newPlayer, type boolean, represents if the player has been entered before
      */
-    public static void updateRecords(Player p) {
+    public static void updateRecords(Player p, boolean newPlayer) {
         try {
             statement = dbConnection.createStatement();
 
             //Check if the player already exists in db and remove them
             // if they do
             String sqlStatement;
-            if (p.isReturning()) {
+            if (!newPlayer) {
                 sqlStatement = "DELETE FROM PLAYER WHERE UPPER(USERNAME) = " + "UPPER('" + p.getUsername() + "')";
                 statement.executeUpdate(sqlStatement);
             }

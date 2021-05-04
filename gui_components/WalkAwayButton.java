@@ -6,7 +6,7 @@
 package gui_components;
 
 import gui_styling.OnHoverButton;
-import animation.CurrentPanel;
+import animation.GameState;
 import java.awt.Color;
 import java.awt.Dimension;
 import javax.swing.JButton;
@@ -24,7 +24,7 @@ public class WalkAwayButton extends JPanel {
     private final Color defaultBackground = new Color(64, 64, 206);
     private final Color onHoverBackground = new Color(230, 28, 34);
 
-    public WalkAwayButton(String text, Dimension size, CurrentPanel currentPanel) {
+    public WalkAwayButton(String text, Dimension size, GameState currentPanel) {
         button = new JButton(text);
         button.setSize(size);
         button.setBackground(defaultBackground);

@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import animation.CurrentPanel;
+import animation.GameState;
 import driver.PlayGame;
 import gui_components.WalkAwayButton;
 import question.QuestionTimer;
@@ -43,11 +43,11 @@ public class PlayGamePanel extends JPanel implements ActionListener {
     private int panelWidth = 1280;
     private int panelHeight = 720;
     private final Color BACKGROUND_COLOR = new Color(0, 0, 0);
-    private final CurrentPanel currentPanel;
+    private final GameState currentPanel;
     private ArrayList<Question> questions;
     private int currentQuestion;
 
-    public PlayGamePanel(int panelWidth, int panelHeight, CurrentPanel currentPanel) {
+    public PlayGamePanel(int panelWidth, int panelHeight, GameState currentPanel) {
         this.currentPanel = currentPanel;
         this.panelWidth = panelWidth;
         this.panelHeight = panelHeight;

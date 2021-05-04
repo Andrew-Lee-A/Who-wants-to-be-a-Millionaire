@@ -10,7 +10,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.Timer;
-import animation.CurrentPanel;
+import animation.GameState;
 import animation.MoneyRain;
 import question.QuestionTimer;
 
@@ -29,17 +29,17 @@ public class MainMenuPanel extends JPanel implements ActionListener {
     private QuestionTimer questionTimer;
     private final MoneyRain[] moneyRain; private final int NUM_DOLLARS = 100;
     private final Color BACKGROUND_COLOR = new Color(0, 0, 0);
-    private final CurrentPanel currentPanel;
+    private final GameState gameState;
     
-    public MainMenuPanel(Dimension size, CurrentPanel currentPanel, PlayGamePanel gamePanel, QuestionTimer questionTimer, String username) {
-        this.currentPanel = currentPanel;
+    public MainMenuPanel(Dimension size, GameState gameState, PlayGamePanel gamePanel, QuestionTimer questionTimer) {
+        this.gameState = gameState;
         this.questionTimer = questionTimer;
         // getting button panel
         mainMenuButtonPanel = new MainMenuButtonPanel(new Dimension((MENU_BUTTON_SIZE.width), size.height), MENU_BUTTON_SIZE, new Color(52, 12, 132), 
-                new Color(255, 255, 255), new Color(64, 64, 206), currentPanel, gamePanel, questionTimer);
+                new Color(255, 255, 255), new Color(64, 64, 206), gameState, gamePanel, questionTimer);
         
         // set label
-        welcomeLabel = new JLabel("Welcome, " + username);
+        welcomeLabel = new JLabel("Welcome to Who Wants To Be A Millionaire!");
         welcomeLabel.setFont(new Font("", Font.BOLD, 32));
         welcomeLabel.setForeground(new Color(64, 64, 206));
 

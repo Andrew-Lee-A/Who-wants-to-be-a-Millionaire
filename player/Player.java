@@ -7,7 +7,6 @@ package player;
 public class Player {
     private String username;
     private int currentHighscore;
-    private boolean isReturning; //The player is a returning player i.e. they exist in the db
     
     public Player(String username) throws IllegalArgumentException, NullPointerException{
         if(username.trim().length() == 0) {
@@ -16,13 +15,11 @@ public class Player {
         
         this.username = username;
         this.currentHighscore = 0;
-        this.isReturning = false;
     }
     
     public Player() {
         this.username = "";
         this.currentHighscore = 0;
-        this.isReturning = false;
     }
 
     /**
@@ -58,19 +55,5 @@ public class Player {
         }
         
         this.username = username;
-    }
-
-    /**
-     * @return the isReturning
-     */
-    public boolean isReturning() {
-        return isReturning;
-    }
-
-    /**
-     * @param isReturning the isReturning to set
-     */
-    public void setIsReturning(boolean isReturning) {
-        this.isReturning = isReturning;
     }
 }

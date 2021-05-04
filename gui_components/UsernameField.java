@@ -1,18 +1,18 @@
 package gui_components;
 
+import animation.GameState;
+import game_db.GameDBManager;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.text.ParseException;
 import javax.swing.JButton;
-import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.text.MaskFormatter;
+import javax.swing.JTextField;
+import player.Player;
 
 /**
  * This class is used to create a field for the username to be entered
@@ -21,34 +21,21 @@ import javax.swing.text.MaskFormatter;
  */
 public class UsernameField extends JPanel {
 
-    private JFormattedTextField usernameEntry;
+    private final JTextField usernameEntry;
     private final JLabel usernameLabel;
     private final JButton submit;
-    private final int USERNAME_LENGTH = 20;
-    private String usernameMask;
+    private final GameState currentPanel;
 
-    public UsernameField(int width, int height, Color backgroundColor, Color textColor) {
-
-        try {
-            createMask();
-            MaskFormatter formatStyle = new MaskFormatter(usernameMask);
-            usernameEntry = new JFormattedTextField(formatStyle);
-        } catch (ParseException e) {
-            System.err.println(e);
-        }
+    public UsernameField(int width, int height, GameState currentPanel, Color backgroundColor, Color textColor) {
+        this.currentPanel = currentPanel;
 
         // Set username text field for entry
-        usernameEntry.setColumns(USERNAME_LENGTH);
-        usernameEntry.setSize(new Dimension(1000, 100));
+        usernameEntry = new JTextField();
+        usernameEntry.setPreferredSize(new Dimension(300, 25));
         usernameEntry.setBackground(backgroundColor);
         usernameEntry.setForeground(textColor);
         usernameEntry.setCaretColor(Color.white);
-        usernameEntry.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent event) {
-                usernameEntry.setCaretPosition(0);
-            }
-        });
+        usernameEntry.setFont(new Font("", Font.BOLD, 16));
 
         // Set JLabel for username input
         usernameLabel = new JLabel("Please enter username here (20 characters max):");
@@ -59,13 +46,7 @@ public class UsernameField extends JPanel {
         // create a submission button
         submit = new JButton("Submit");
         submit.setMaximumSize(new Dimension(200, 100));
-        submit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //Check if info is what is expected
-                //if it isnt we must display something
-            }
-        });
+        submit.addActionListener(new UsernameSubmission(this));
         submit.setBackground(textColor);
         submit.setForeground(Color.white);
         submit.setFocusable(false);
@@ -78,13 +59,52 @@ public class UsernameField extends JPanel {
     }
 
     /**
-     * Helper class to create a mask for the amount of characters for a
-     * username.
+     * This private class is used to navigate when a username is to be submitted
+     * it will respond with appropriate error messages.
      */
-    private void createMask() {
-        usernameMask = "";
-        for (int i = 0; i < USERNAME_LENGTH; i++) {
-            usernameMask += "*";
+    private class UsernameSubmission implements ActionListener {
+
+        private final JPanel component;
+
+        UsernameSubmission(JPanel component) {
+            this.component = component;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String usernameEntered = usernameEntry.getText();
+
+            // Make sure a username doesnt have any starting, or trailing whitespace, or is to big
+            if (usernameEntered.trim().equals("")) {
+                JOptionPane.showMessageDialog(component, "Username cannot be empty!", "ERROR", JOptionPane.ERROR_MESSAGE);
+            } else if (usernameEntered.charAt(usernameEntered.length() - 1) == ' ') {
+                JOptionPane.showMessageDialog(component, "Username cannot have trailing white-space!", "ERROR", JOptionPane.ERROR_MESSAGE);
+            } else if (usernameEntered.length() > 20) {
+                JOptionPane.showMessageDialog(component, "Username must not be greater than 20 characters!", "ERROR", JOptionPane.ERROR_MESSAGE);
+            } else if (usernameEntered.charAt(0) == ' ') {
+                JOptionPane.showMessageDialog(component, "Username must not have leading white-space!", "ERROR", JOptionPane.ERROR_MESSAGE);
+            } else {
+                // Intitialise the player object
+                Player p = GameDBManager.doesPlayerExist(new Player(usernameEntered));
+                Integer overwriteData = null;
+                if (p == null) { // new player
+                    p = new Player(usernameEntered);
+                    
+                    currentPanel.setPlayer(p);
+                    currentPanel.goToMainMenu();
+                    GameDBManager.updateRecords(p, true);
+                } else { // returning player
+                    overwriteData = JOptionPane.showOptionDialog(component, "Username found... WARNING Highscore will be overwritten after a game is played, continue?",
+                            "WARNING", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, new String[]{"Continue", "Cancel"}, JOptionPane.YES_OPTION);
+    
+                    if (overwriteData == JOptionPane.YES_OPTION) {
+                        //change the state of the game
+                        currentPanel.setPlayer(p);
+                        currentPanel.goToMainMenu();
+                    }
+                }
+            }
         }
     }
+
 }
