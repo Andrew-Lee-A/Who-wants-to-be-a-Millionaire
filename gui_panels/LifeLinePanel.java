@@ -5,18 +5,18 @@
  */
 package gui_panels;
 
+import animation.GameState;
 import life_lines.PhoneAFriend;
 import life_lines.AskTheAudience;
 import life_lines.FiftyFifty;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import gui_styling.OnHoverButton;
+import life_lines.AbstractPlayerGameHelp;
 
 /**
  * This class is used to represent the lifeline buttons the class takes into
@@ -37,8 +37,10 @@ public class LifeLinePanel extends JPanel {
     private OnHoverButton fiftyFiftyHover;
     private OnHoverButton phoneAFriendHover;
     private OnHoverButton askTheAudienceHover;
+    private final GameState gameState;
 
-    public LifeLinePanel(Dimension d, Color defaultBackgroundColor, Color onHoverColor, Color panelBackgroundColor, Color usedButtonColor) {
+    public LifeLinePanel(Dimension d, GameState gameState, Color defaultBackgroundColor, Color onHoverColor, Color panelBackgroundColor, Color usedButtonColor) {
+        this.gameState = gameState;
         this.defaultBackgroundColor = defaultBackgroundColor;
         this.onHoverColor = onHoverColor;
         this.panelBackgroundColor = panelBackgroundColor;
@@ -67,9 +69,9 @@ public class LifeLinePanel extends JPanel {
         initialiseLifeLineHoverStyling();
 
         //Add the on click even for the button
-        fiftyFifty.getButton().addActionListener(new OnClick());
-        phoneAFriend.getButton().addActionListener(new OnClick());
-        askTheAudience.getButton().addActionListener(new OnClick());
+//        fiftyFifty.getButton().addActionListener(new OnClick());
+//        phoneAFriend.getButton().addActionListener(new OnClick());
+//        askTheAudience.getButton().addActionListener(new OnClick());
 
         // pack panel with buttons and style panel
         super.setSize(d);
@@ -155,20 +157,35 @@ public class LifeLinePanel extends JPanel {
      * private helper class used to remove the action listener rendering the
      * button not usable after it has been used i.e. after its first click
      */
-    private class OnClick implements ActionListener {
+//    private class OnClick implements ActionListener {
+//
+//        @Override
+//        public void actionPerformed(ActionEvent event) {
+//            if (!gameState.isLifeLineUsedThisRound()) {
+//                if (event.getSource() == fiftyFifty.getButton()) {
+//                    fiftyFifty.getButton().removeMouseListener(fiftyFiftyHover);
+//                    fiftyFifty.getButton().setBackground(usedButtonColor);
+//                } else if (event.getSource() == phoneAFriend.getButton()) {
+//                    phoneAFriend.getButton().removeMouseListener(phoneAFriendHover);
+//                    phoneAFriend.getButton().setBackground(usedButtonColor);
+//                } else if (event.getSource() == askTheAudience.getButton()) {
+//                    askTheAudience.getButton().removeMouseListener(askTheAudienceHover);
+//                    askTheAudience.getButton().setBackground(usedButtonColor);
+//                }
+//            }
+//        }
+//    }
 
-        @Override
-        public void actionPerformed(ActionEvent event) {
-            if (event.getSource() == fiftyFifty.getButton()) {
-                fiftyFifty.getButton().removeMouseListener(fiftyFiftyHover);
-                fiftyFifty.getButton().setBackground(usedButtonColor);
-            } else if (event.getSource() == phoneAFriend.getButton()) {
-                phoneAFriend.getButton().removeMouseListener(phoneAFriendHover);
-                phoneAFriend.getButton().setBackground(usedButtonColor);
-            } else if (event.getSource() == askTheAudience.getButton()) {
-                askTheAudience.getButton().removeMouseListener(askTheAudienceHover);
-                askTheAudience.getButton().setBackground(usedButtonColor);
-            }
+    public void buttonClicked(AbstractPlayerGameHelp lifeLine) {
+        if (lifeLine instanceof FiftyFifty) {
+            fiftyFifty.getButton().removeMouseListener(fiftyFiftyHover);
+            fiftyFifty.getButton().setBackground(usedButtonColor);
+        } else if (lifeLine instanceof PhoneAFriend) {
+            phoneAFriend.getButton().removeMouseListener(phoneAFriendHover);
+            phoneAFriend.getButton().setBackground(usedButtonColor);
+        } else if (lifeLine instanceof AskTheAudience) {
+            askTheAudience.getButton().removeMouseListener(askTheAudienceHover);
+            askTheAudience.getButton().setBackground(usedButtonColor);
         }
     }
 }

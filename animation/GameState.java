@@ -15,6 +15,7 @@ public class GameState {
 
     private final JPanel selectedPanel;
     private final CardLayout cardLayout;
+    private boolean lifeLineUsedThisRound;
     private String login;
     private String mainMenu;
     private String playGame;
@@ -23,6 +24,7 @@ public class GameState {
     private Player p;
 
     public GameState(JPanel selectedPanel, CardLayout cardLayout) {
+        lifeLineUsedThisRound = false;
         this.selectedPanel = selectedPanel;
         this.cardLayout = cardLayout;
 
@@ -155,5 +157,19 @@ public class GameState {
      */
     public void setPlayer(Player p) {
         this.p = p;
+    }
+
+    /**
+     * @return the lifeLineUsedThisRound
+     */
+    public boolean isLifeLineUsedThisRound() {
+        return lifeLineUsedThisRound;
+    }
+
+    /**
+     * @param lifeLineUsedThisRound the lifeLineUsedThisRound to set
+     */
+    public void setLifeLineUsedThisRound(boolean lifeLineUsedThisRound) {
+        this.lifeLineUsedThisRound = lifeLineUsedThisRound;
     }
 }

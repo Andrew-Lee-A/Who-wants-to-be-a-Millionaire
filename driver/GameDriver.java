@@ -52,6 +52,9 @@ public class GameDriver {
         //start db
         GameDBManager.connectToDB();
         
+        //create db tables if not present
+        GameDBManager.makeTables();
+        
         JFrame gameFrame = new JFrame("Who Wants To Be A Millionaire");
         gameFrame.setSize(GAME_SIZE);
         gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

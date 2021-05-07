@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Arrays;
 import player.Player;
 
 /**
@@ -102,10 +103,10 @@ public class GameDBManager {
                 sqlStatement = "DELETE FROM PLAYER WHERE UPPER(USERNAME) = " + "UPPER('" + p.getUsername() + "')";
                 statement.executeUpdate(sqlStatement);
             }
-            
+
             sqlStatement = "INSERT INTO PLAYER VALUES (" + "'" + p.getUsername() + "'" + ", " + p.getCurrentHighscore() + ")";
             statement.executeUpdate(sqlStatement);
-            
+
             statement.close();
         } catch (SQLException e) {
             System.err.println(e);
@@ -117,29 +118,66 @@ public class GameDBManager {
      * creates the two tables used for the game
      */
     public static void makeTables() {
+        boolean[] tableExists = checkTablesExist();
+
         try {
             statement = dbConnection.createStatement();
-
-            // Create player table
-            String sqlStatement = "CREATE TABLE PLAYER (USERNAME VARCHAR(50), HIGHSCORE INT)";
-            statement.executeUpdate(sqlStatement);
-
-            // Create highscore table to map different highscores to winnings
-            sqlStatement = "CREATE TABLE WINNINGS (SCORE INT, AMOUNT VARCHAR(50))";
-            statement.executeUpdate(sqlStatement);
             
-            // Highscores is a static table so initial insertions may be made
-            sqlStatement = "INSERT INTO WINNINGS VALUES "
-                    + "(0, '$0'), (1, '$100'), (2, '$200'),"
-                    + "(3, '$300'), (4, '$500'), (5, '$1,000'),"
-                    + "(6, '$2,000'), (7, '$4,000'), (8, '$8,000'),"
-                    + "(9, '$16,000'), (10, '$32,000'), (11, '$64,000'),"
-                    + "(12, '$125,000'), (13, '$250,000'), (14, '$500,000'),"
-                    + "(15, '$1,000,000')";
-            statement.executeUpdate(sqlStatement);
+            String sqlStatement;
+            if (!tableExists[0]) {
+                // Create player table
+                sqlStatement = "CREATE TABLE PLAYER (USERNAME VARCHAR(50), HIGHSCORE INT)";
+                statement.executeUpdate(sqlStatement);
+            }
+
+            if (!tableExists[1]) {
+                // Create highscore table to map different highscores to winnings
+                sqlStatement = "CREATE TABLE WINNINGS (SCORE INT, AMOUNT VARCHAR(50))";
+                statement.executeUpdate(sqlStatement);
+
+                // Highscores is a static table so initial insertions may be made
+                sqlStatement = "INSERT INTO WINNINGS VALUES "
+                        + "(0, '$0'), (1, '$100'), (2, '$200'),"
+                        + "(3, '$300'), (4, '$500'), (5, '$1,000'),"
+                        + "(6, '$2,000'), (7, '$4,000'), (8, '$8,000'),"
+                        + "(9, '$16,000'), (10, '$32,000'), (11, '$64,000'),"
+                        + "(12, '$125,000'), (13, '$250,000'), (14, '$500,000'),"
+                        + "(15, '$1,000,000')";
+                statement.executeUpdate(sqlStatement);
+            }
+            
             statement.close();
         } catch (SQLException e) {
             System.err.println(e);
         }
+    }
+
+    /**
+     * This method determines if the tables player and winnings
+     * currently exist within the database
+     * @return a boolean array where the first value represents if the player table is in
+     * the db and the second value represents the winnings table being in the db
+     */
+    public static boolean[] checkTablesExist() {
+        // note that the first index represents the player and the second index
+        // represents the winnings
+        boolean[] tablesExist = new boolean[2];
+        Arrays.fill(tablesExist, false);
+
+        try {
+            ResultSet rs = dbConnection.getMetaData().getTables(null, null, null, new String[]{"TABLE"});
+            while (rs.next()) {
+                String currentTable = rs.getString("TABLE_NAME");
+                if (currentTable.equalsIgnoreCase("player")) {
+                    tablesExist[0] = true;
+                } else if (currentTable.equalsIgnoreCase("winnings")) {
+                    tablesExist[1] = true;
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        
+        return tablesExist;
     }
 }

@@ -52,7 +52,7 @@ public class PlayGamePanel extends JPanel implements ActionListener {
 
         // Initialise attributes for panels
         walkAwayButton = new WalkAwayButton("Walk Away", new Dimension(100, 60), gameState);
-        lifeLinesPanel = new LifeLinePanel(new Dimension(380, 60), new Color(64, 64, 206), new Color(64, 206, 135), BACKGROUND_COLOR, BACKGROUND_COLOR);
+        lifeLinesPanel = new LifeLinePanel(new Dimension(380, 60), gameState, new Color(64, 64, 206), new Color(64, 206, 135), BACKGROUND_COLOR, BACKGROUND_COLOR);
         answersPanel = new AnswerButtons(new Dimension((this.panelWidth - (2 * INSIDE_PADDING)), 320),
                 BACKGROUND_COLOR, new Color(64, 206, 135), new Color(255, 255, 255), INSIDE_PADDING, questions.get(currentQuestion).getAnswers());
 
@@ -62,6 +62,8 @@ public class PlayGamePanel extends JPanel implements ActionListener {
             questionButtons[i].addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
+                    gameState.setLifeLineUsedThisRound(false);
+
                     if (!(answersPanel.getCorrectButton() == e.getSource())) { // exit the game
                         resetPanel();
                         gameState.updateRecords();
@@ -72,7 +74,7 @@ public class PlayGamePanel extends JPanel implements ActionListener {
                         questionTimer.resetCounter();
                         timerLabel.setText(questionTimer.getCounter().toString());
                         timerLabel.setForeground(INTIAL_TIMER_COLOR);
-                        
+
                         Player p = gameState.getPlayer();
                         p.setHighscore(p.getCurrentHighscore() + 1);
                     }
@@ -102,6 +104,7 @@ public class PlayGamePanel extends JPanel implements ActionListener {
             public void actionPerformed(ActionEvent e) {
                 resetPanel();
                 gameState.updateRecords();
+                gameState.setLifeLineUsedThisRound(false);
                 gameState.goToMainMenu();
             }
         });
@@ -150,8 +153,9 @@ public class PlayGamePanel extends JPanel implements ActionListener {
             questionTimer.resetCounter();
             timerLabel.setForeground(INTIAL_TIMER_COLOR);
             timerLabel.setText(questionTimer.getCounter().toString());
-            
+
             gameState.updateRecords();
+            gameState.setLifeLineUsedThisRound(false);
             gameState.goToMainMenu();
         }
     }
@@ -181,11 +185,15 @@ public class PlayGamePanel extends JPanel implements ActionListener {
         lifeLinesPanel.getFiftyFiftyHelper().getButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                AbstractPlayerGameHelp lifeLine = lifeLinesPanel.getFiftyFiftyHelper();
+                if (!gameState.isLifeLineUsedThisRound()) {
+                    AbstractPlayerGameHelp lifeLine = lifeLinesPanel.getFiftyFiftyHelper();
+                    lifeLinesPanel.buttonClicked(lifeLine);
 
-                if (!lifeLine.isUsed()) {
-                    setButtonTextBlank(lifeLine.getHelp(questions.get(currentQuestion)));
-                    lifeLine.setIsUsed(true);
+                    if (!lifeLine.isUsed()) {
+                        gameState.setLifeLineUsedThisRound(true);
+                        setButtonTextBlank(lifeLine.getHelp(questions.get(currentQuestion)));
+                        lifeLine.setIsUsed(true);
+                    }
                 }
             }
         });
@@ -193,12 +201,16 @@ public class PlayGamePanel extends JPanel implements ActionListener {
         lifeLinesPanel.getAskTheAudienceHelper().getButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                AskTheAudience lifeLine = lifeLinesPanel.getAskTheAudienceHelper();
+                if (!gameState.isLifeLineUsedThisRound()) {
+                    AskTheAudience lifeLine = lifeLinesPanel.getAskTheAudienceHelper();
+                    lifeLinesPanel.buttonClicked(lifeLine);
 
-                if (!lifeLine.isUsed()) {
-                    questionLabel.setText("<html>" + questionLabel.getText() + "<br>" + "the two most voted audience options are..." + "</html>");
-                    setButtonTextBlank(lifeLine.getHelp(questions.get(currentQuestion)));
-                    lifeLine.setIsUsed(true);
+                    if (!lifeLine.isUsed()) {
+                        gameState.setLifeLineUsedThisRound(true);
+                        questionLabel.setText("<html>" + questionLabel.getText() + "<br>" + "the two most voted audience options are..." + "</html>");
+                        setButtonTextBlank(lifeLine.getHelp(questions.get(currentQuestion)));
+                        lifeLine.setIsUsed(true);
+                    }
                 }
             }
         });
@@ -206,13 +218,17 @@ public class PlayGamePanel extends JPanel implements ActionListener {
         lifeLinesPanel.getPhoneAFriendHelper().getButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                PhoneAFriend lifeLine = lifeLinesPanel.getPhoneAFriendHelper();
+                if (!gameState.isLifeLineUsedThisRound()) {
+                    PhoneAFriend lifeLine = lifeLinesPanel.getPhoneAFriendHelper();
+                    lifeLinesPanel.buttonClicked(lifeLine);
 
-                if (!lifeLine.isUsed()) {
-                    ArrayList<Answer> ans = lifeLine.getHelp(questions.get(currentQuestion));
-                    questionLabel.setText("<html>" + questionLabel.getText() + "<br>" + lifeLinesPanel.getPhoneAFriendHelper().friendsResponse(ans) + "</html>");
-                    setButtonTextBlank(ans);
-                    lifeLine.setIsUsed(true);
+                    if (!lifeLine.isUsed()) {
+                        gameState.setLifeLineUsedThisRound(true);
+                        ArrayList<Answer> ans = lifeLine.getHelp(questions.get(currentQuestion));
+                        questionLabel.setText("<html>" + questionLabel.getText() + "<br>" + lifeLinesPanel.getPhoneAFriendHelper().friendsResponse(ans) + "</html>");
+                        setButtonTextBlank(ans);
+                        lifeLine.setIsUsed(true);
+                    }
                 }
             }
         });
@@ -244,5 +260,4 @@ public class PlayGamePanel extends JPanel implements ActionListener {
     public QuestionTimer getCounterTImer() {
         return questionTimer;
     }
-
 }
