@@ -60,7 +60,6 @@ public class GameDBManager {
      * @return Player, the player found, null if no player found
      */
     public static Player doesPlayerExist(Player p) {
-        Player foundPlayer = null;
 
         try {
             statement = dbConnection.createStatement();
@@ -71,7 +70,7 @@ public class GameDBManager {
                 int highscore = rsCursor.getInt("HIGHSCORE");
 
                 if (p.getUsername().equalsIgnoreCase(username)) {
-                    foundPlayer = new Player(username);
+                    Player foundPlayer = new Player(username);
                     foundPlayer.setHighscore(highscore);
                     return foundPlayer;
                 }
@@ -80,7 +79,7 @@ public class GameDBManager {
             System.out.println(e);
         }
 
-        return foundPlayer;
+        return null;
     }
 
     /**

@@ -5,7 +5,6 @@
  */
 package gui_components;
 
-import gui_panels.MainMenuButtonPanel;
 import gui_styling.OnHoverButton;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -24,7 +23,6 @@ public class MainMenuButton {
     public static JButton createMenuButton(String text, Dimension buttonSize, Color defaultButtonColor, Color onHoverColor) {
         JButton menuButton = new JButton(text);
         menuButton.setMaximumSize(buttonSize);
-        menuButton.setAlignmentX(MainMenuButtonPanel.CENTER_ALIGNMENT);
         menuButton.setBackground(defaultButtonColor);
         menuButton.setFocusable(false);
         menuButton.addMouseListener(new OnHoverButton(menuButton, defaultButtonColor, onHoverColor));
