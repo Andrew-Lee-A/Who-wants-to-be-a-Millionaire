@@ -31,7 +31,18 @@ public class MenuNavController extends Observable implements ActionListener {
             modelSelection = "play";
             this.setChanged();
             this.notifyObservers();
+        } else if (e.getSource() == menuView.getButton("highscores")){
+            //Andrew TODO:
+            modelSelection = "highscores";
+            this.setChanged();
+            this.notifyObservers();
+        } else if (e.getSource() == menuView.getButton("rules")){
+            //Andrew TODO:
+            modelSelection = "rules";
+            this.setChanged();
+            this.notifyObservers();
         }
+ 
     }
     
     public String getModelSelection() {

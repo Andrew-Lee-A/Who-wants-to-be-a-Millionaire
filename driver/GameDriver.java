@@ -5,9 +5,11 @@ import java.awt.Dimension;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import animation.GameState;
+import controllers.HighscoreController;
 import controllers.LoginController;
 import controllers.MenuNavController;
 import game_db.GameDBManager;
+import gui_panels.HighscorePanel;
 import gui_panels.LoginPanel;
 import gui_panels.MainMenuPanel;
 import gui_panels.PlayGamePanel;
@@ -51,7 +53,12 @@ public class GameDriver {
         LoginController loginController = new LoginController(playerModel, loginView);
         playerModel.addObserver(loginView);
         loginView.addLoginController(loginController);
-
+        
+        //Setting up MVC for viewing highscores
+        HighscorePanel highScoreView = new HighscorePanel(GAME_WIDTH, GAME_HEIGHT, currentGameState, Color.black);
+        HighscoreController highScoreController = new HighscoreController(highScoreView);
+        highScoreController.addObserver(highScoreView);
+        highScoreView.addHighScoreController(highScoreController);
         // Setting up MVC for main menu functionality, note that the controller acts
         // as the model and view, as model is a primitive (see controller class for more info).
         QuestionTimer questionTimer = playGamePanel.getCounterTImer();
@@ -65,9 +72,14 @@ public class GameDriver {
         selectedPanel.add(loginView, LOGIN);
         selectedPanel.add(mainMenuView, MAIN_MENU);
         selectedPanel.add(playGamePanel, PLAY_GAME);
+        selectedPanel.add(highScoreView, HIGHSCORES); //TODO make the panels!
+       // selectedPanel.add(rulesPanel, RULES);
         currentGameState.setLogin(LOGIN);
         currentGameState.setMainMenu(MAIN_MENU);
         currentGameState.setPlayGame(PLAY_GAME);
+        currentGameState.setHighscores(HIGHSCORES);
+        currentGameState.setRules(RULES);
+        
 
         //start db
         GameDBManager.connectToDB();
