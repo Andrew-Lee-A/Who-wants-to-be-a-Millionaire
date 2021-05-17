@@ -26,9 +26,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
-import player.Player;
 /**
  *
  * @author Andrew Lee 17983766
@@ -106,7 +104,6 @@ public class HighscorePanel extends JPanel implements Observer{
         super.add(back, BorderLayout.SOUTH);
         super.add(jp, BorderLayout.WEST);
         super.add(tablePanel, BorderLayout.CENTER);
-        
     }    
     
     public void addHighScoreController(HighscoreController controller){
