@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Arrays;
 import player.Player;
 
@@ -178,5 +179,30 @@ public class GameDBManager {
         }
         
         return tablesExist;
+    }
+    
+    /**
+     * method is used to get a list of player scores stored in the db
+     * currently
+     * @return a list of all the players in the db
+     */
+    public static ArrayList<Player> getPlayerList() {
+        ArrayList<Player> players = new ArrayList<>();
+        try {
+            Statement sqlState = dbConnection.createStatement();
+            String sqlGetPlayers = "SELECT * FROM player";
+            ResultSet rs = sqlState.executeQuery(sqlGetPlayers);
+            
+            while(rs.next()) {
+                String username = rs.getString("username");
+                int highscore = rs.getInt("highscore");
+                
+                players.add(new Player(username, highscore));
+            }
+        } catch (SQLException e) {
+            System.err.println("Could not fetch player list....");
+        }
+        
+        return players;
     }
 }

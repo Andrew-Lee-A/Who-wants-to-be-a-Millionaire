@@ -19,6 +19,15 @@ public class Player extends Observable {
         this.username = username;
         this.currentHighscore = 0;
     }
+    
+    public Player(String username, int highscore) throws IllegalArgumentException, NullPointerException {
+        if (username.trim().length() == 0) {
+            throw new IllegalArgumentException("Username cannot be an empty string");
+        }
+        this.setHighscore(highscore);
+        this.username = username;
+        this.currentHighscore = 0;
+    }
 
     public Player() {
         this.username = "";
