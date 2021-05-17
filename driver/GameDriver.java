@@ -8,11 +8,13 @@ import animation.GameState;
 import controllers.HighscoreController;
 import controllers.LoginController;
 import controllers.MenuNavController;
+import controllers.RulesController;
 import game_db.GameDBManager;
 import gui_panels.HighscorePanel;
 import gui_panels.LoginPanel;
 import gui_panels.MainMenuPanel;
 import gui_panels.PlayGamePanel;
+import gui_panels.RulesPanel;
 import java.awt.Color;
 import java.awt.event.ActionListener;
 import player.Player;
@@ -59,6 +61,13 @@ public class GameDriver {
         HighscoreController highScoreController = new HighscoreController(highScoreView);
         highScoreController.addObserver(highScoreView);
         highScoreView.addHighScoreController(highScoreController);
+        
+        //Setting up MVC for viewing rules
+        RulesPanel rulesView = new RulesPanel(GAME_WIDTH, GAME_HEIGHT, currentGameState, Color.black);
+        RulesController rulesController = new RulesController(rulesView);
+        rulesController.addObserver(rulesView);
+        rulesView.addRulesController(rulesController);
+        
         // Setting up MVC for main menu functionality, note that the controller acts
         // as the model and view, as model is a primitive (see controller class for more info).
         QuestionTimer questionTimer = playGamePanel.getCounterTImer();
@@ -73,7 +82,7 @@ public class GameDriver {
         selectedPanel.add(mainMenuView, MAIN_MENU);
         selectedPanel.add(playGamePanel, PLAY_GAME);
         selectedPanel.add(highScoreView, HIGHSCORES); //TODO make the panels!
-       // selectedPanel.add(rulesPanel, RULES);
+        selectedPanel.add(rulesView, RULES);
         currentGameState.setLogin(LOGIN);
         currentGameState.setMainMenu(MAIN_MENU);
         currentGameState.setPlayGame(PLAY_GAME);
