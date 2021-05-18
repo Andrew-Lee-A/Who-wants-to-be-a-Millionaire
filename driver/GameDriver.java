@@ -39,6 +39,12 @@ public class GameDriver {
     private final static String RULES = "rules";
 
     public static void main(String[] args) {
+        //start db
+        GameDBManager.connectToDB();
+
+        //create db tables if not present
+        GameDBManager.makeTables();
+
         // Model for all sub mvc classes
         Player playerModel = new Player();
 
@@ -110,12 +116,6 @@ public class GameDriver {
         currentGameState.setPlayGame(PLAY_GAME);
         currentGameState.setHighscores(HIGHSCORES);
         currentGameState.setRules(RULES);
-
-        //start db
-        GameDBManager.connectToDB();
-
-        //create db tables if not present
-        GameDBManager.makeTables();
 
         JFrame gameFrame = new JFrame("Who Wants To Be A Millionaire");
         gameFrame.setSize(GAME_SIZE);
