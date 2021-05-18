@@ -2,6 +2,7 @@ package question;
 
 import java.util.ArrayList;
 import java.util.InputMismatchException;
+import java.util.Observable;
 import java.util.Random;
 
 /**
@@ -10,9 +11,11 @@ import java.util.Random;
  *
  * @author Rhys Van Rooyen Student ID: 19049569
  */
-public class QuestionList {
-
+public class QuestionList extends Observable {
+    private static ArrayList<Question> qList;
+    
     public QuestionList() {
+        qList = QuestionList.selectQuestions();
     }
 
     /**

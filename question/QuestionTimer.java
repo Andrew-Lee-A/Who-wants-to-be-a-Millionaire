@@ -1,6 +1,7 @@
 package question;
 
 import java.awt.event.ActionListener;
+import java.util.Observable;
 import javax.swing.Timer;
 
 /**
@@ -8,7 +9,7 @@ import javax.swing.Timer;
  * question
  * @author Rhys Van Rooyen, Student ID: 19049569
  */
-public class QuestionTimer {
+public class QuestionTimer extends Observable{
     private Integer counter;
     private final Timer timer;
     
@@ -31,6 +32,8 @@ public class QuestionTimer {
     
     public void decrementCounter() {
         --counter;
+        this.setChanged();
+        this.notifyObservers(this);
     }
     
     public Integer getCounter() {

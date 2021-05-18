@@ -19,6 +19,8 @@ import javax.swing.JPanel;
 import animation.GameState;
 import driver.PlayGame;
 import gui_components.WalkAwayButton;
+import java.util.Observable;
+import java.util.Observer;
 import player.Player;
 import question.QuestionTimer;
 
@@ -26,14 +28,13 @@ import question.QuestionTimer;
  *
  * @author Rhys Van Rooyen, Student ID: 19049569
  */
-public class PlayGamePanel extends JPanel implements ActionListener {
+public class PlayGamePanel extends JPanel implements Observer {
 
     private WalkAwayButton walkAwayButton;
     private LifeLinePanel lifeLinesPanel;
     private AnswerButtons answersPanel;
     private JLabel questionLabel;
     private JLabel timerLabel;
-    private final QuestionTimer questionTimer;
     private final int INSIDE_PADDING = 20;
     private int panelWidth = 1280;
     private int panelHeight = 720;
@@ -92,8 +93,7 @@ public class PlayGamePanel extends JPanel implements ActionListener {
         questionLabel.setFont(new Font("", Font.BOLD, 26));
 
         // Creating the timer label
-        questionTimer = new QuestionTimer(this);
-        timerLabel = new JLabel(questionTimer.getCounter().toString());
+        timerLabel = new JLabel("60");
         timerLabel.setForeground(INTIAL_TIMER_COLOR);
         timerLabel.setSize(100, 60);
         timerLabel.setFont(new Font("", Font.BOLD, 60));
@@ -129,57 +129,57 @@ public class PlayGamePanel extends JPanel implements ActionListener {
         super.add(timerLabel);
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (questionTimer.getCounter() > 0) {
-            questionTimer.decrementCounter();
-            switch (questionTimer.getCounter()) {
-                case 40:
-                    timerLabel.setForeground(new Color(220, 255, 0));
-                    break;
-                case 20:
-                    timerLabel.setForeground(new Color(255, 169, 0));
-                    break;
-                case 10:
-                    timerLabel.setForeground(new Color(221, 41, 34));
-                    break;
-            }
-
-            timerLabel.setText(questionTimer.getCounter().toString());
-        }
-
-        if (questionTimer.getCounter() <= 0) {
-            questionTimer.stopTimer();
-            questionTimer.resetCounter();
-            timerLabel.setForeground(INTIAL_TIMER_COLOR);
-            timerLabel.setText(questionTimer.getCounter().toString());
-
-            gameState.updateRecords();
-            gameState.setLifeLineUsedThisRound(false);
-            gameState.goToMainMenu();
-        }
-    }
+//    @Override
+//    public void actionPerformed(ActionEvent e) {
+//        if (questionTimer.getCounter() > 0) {
+//            questionTimer.decrementCounter();
+//            switch (questionTimer.getCounter()) {
+//                case 40:
+//                    timerLabel.setForeground(new Color(220, 255, 0));
+//                    break;
+//                case 20:
+//                    timerLabel.setForeground(new Color(255, 169, 0));
+//                    break;
+//                case 10:
+//                    timerLabel.setForeground(new Color(221, 41, 34));
+//                    break;
+//            }
+//
+//            timerLabel.setText(questionTimer.getCounter().toString());
+//        }
+//
+//        if (questionTimer.getCounter() <= 0) {
+//            questionTimer.stopTimer();
+//            questionTimer.resetCounter();
+//            timerLabel.setForeground(INTIAL_TIMER_COLOR);
+//            timerLabel.setText(questionTimer.getCounter().toString());
+//
+//            gameState.updateRecords();
+//            gameState.setLifeLineUsedThisRound(false);
+//            gameState.goToMainMenu();
+//        }
+//    }
 
     /**
      * this helper method allows the game to be put back into its initial state
      * with new questions supplied
      */
-    private void resetPanel() {
-        //Reset underlying values
-        questions = PlayGame.resetGame(questionTimer, lifeLinesPanel);
-
-        //Reset timer styling
-        timerLabel.setForeground(INTIAL_TIMER_COLOR);
-        timerLabel.setText(questionTimer.getCounter().toString());
-
-        //Reset question styling
-        currentQuestion = 0;
-        questionLabel.setText(questions.get(currentQuestion).getText());
-        answersPanel.setAnswers(questions.get(currentQuestion).getAnswers());
-
-        // Reset life lines styling
-        lifeLinesPanel.resetLifeLineStyling();
-    }
+//    private void resetPanel() {
+//        //Reset underlying values
+//        questions = PlayGame.resetGame(questionTimer, lifeLinesPanel);
+//
+//        //Reset timer styling
+//        timerLabel.setForeground(INTIAL_TIMER_COLOR);
+//        timerLabel.setText(questionTimer.getCounter().toString());
+//
+//        //Reset question styling
+//        currentQuestion = 0;
+//        questionLabel.setText(questions.get(currentQuestion).getText());
+//        answersPanel.setAnswers(questions.get(currentQuestion).getAnswers());
+//
+//        // Reset life lines styling
+//        lifeLinesPanel.resetLifeLineStyling();
+//    }
 
     private void setLifeLineListeners() {
         lifeLinesPanel.getFiftyFiftyHelper().getButton().addActionListener(new ActionListener() {
@@ -259,5 +259,36 @@ public class PlayGamePanel extends JPanel implements ActionListener {
      */
     public QuestionTimer getCounterTImer() {
         return questionTimer;
+    }
+    
+    public GameState getGameState() {
+        return this.gameState;
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        if (o instanceof QuestionTimer) {
+            QuestionTimer qt = (QuestionTimer) o;
+
+            switch (qt.getCounter()) {
+                case 40:
+                    timerLabel.setForeground(new Color(220, 255, 0));
+                    break;
+                case 20:
+                    timerLabel.setForeground(new Color(255, 169, 0));
+                    break;
+                case 10:
+                    timerLabel.setForeground(new Color(221, 41, 34));
+                    break;
+                case 0:
+                    timerLabel.setForeground(INTIAL_TIMER_COLOR);
+                    timerLabel.setText(qt.getCounter().toString());
+                    break;
+            }
+
+            timerLabel.setText(qt.getCounter().toString());
+        }
+        
+        
     }
 }
