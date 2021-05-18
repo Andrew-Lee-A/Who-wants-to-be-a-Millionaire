@@ -72,7 +72,7 @@ public class GameDriver {
 
         // Setting up mvc for playing game
         AnswerController answerController = new AnswerController(currentGameState);
-        QuestionTimerController timerController = new QuestionTimerController();
+        QuestionTimerController timerController = new QuestionTimerController(currentGameState);
         gameView = new PlayGamePanel(GAME_WIDTH, GAME_HEIGHT, currentGameState, timerController.getQuestionTimerModel(), answerController.getCurrentQuestion());
 
         // Adding model & view to controllers

@@ -1,5 +1,6 @@
 package controllers;
 
+import animation.GameState;
 import gui_panels.PlayGamePanel;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -14,11 +15,13 @@ public class QuestionTimerController implements ActionListener {
 
     private final QuestionTimer questionTimerModel;
     private PlayGamePanel gameView;
+    private final GameState gameState;
 
     private final Color INTIAL_TIMER_COLOR = new Color(63, 255, 202);
 
-    public QuestionTimerController() {
+    public QuestionTimerController(GameState gameState) {
         this.gameView = null;
+        this.gameState = gameState;
         questionTimerModel = new QuestionTimer(this);
     }
 
@@ -31,10 +34,9 @@ public class QuestionTimerController implements ActionListener {
         if (questionTimerModel.getCounter() <= 0) {
             questionTimerModel.stopTimer();
             questionTimerModel.resetCounter();
-
-            gameView.getGameState().updateRecords();
-            gameView.getGameState().setLifeLineUsedThisRound(false);
-            gameView.getGameState().goToMainMenu();
+            gameState.updateRecords();
+            gameState.setLifeLineUsedThisRound(false);
+            gameState.goToMainMenu();
         }
     }
 
