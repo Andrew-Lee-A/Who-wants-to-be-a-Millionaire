@@ -10,7 +10,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.JButton;
@@ -18,6 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import animation.GameState;
 import controllers.AnswerController;
+import controllers.WalkAwayController;
 import gui_components.WalkAwayButton;
 import java.util.Observable;
 import java.util.Observer;
@@ -68,19 +68,6 @@ public class PlayGamePanel extends JPanel implements Observer {
         timerLabel.setForeground(INTIAL_TIMER_COLOR);
         timerLabel.setSize(100, 60);
         timerLabel.setFont(new Font("", Font.BOLD, 60));
-
-        // Adding walk away features
-        walkAwayButton.getWalkAwayButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                resetPanel();
-                questionTimer.resetCounter();
-                questionTimer.stopTimer();
-                gameState.updateRecords();
-                gameState.setLifeLineUsedThisRound(false);
-                gameState.goToMainMenu();
-            }
-        });
 
         // Set the requirements for the frame
         super.setSize(new Dimension(this.panelWidth, this.panelHeight));
@@ -175,6 +162,8 @@ public class PlayGamePanel extends JPanel implements Observer {
                 timerLabel.setForeground(INTIAL_TIMER_COLOR);
             } else {
                 resetPanel();
+                questionTimer.stopTimer();
+                questionTimer.resetCounter();
             }
         } else if (o instanceof AbstractPlayerGameHelp) { // if a life line has been clicked adjust styling
 
@@ -196,6 +185,8 @@ public class PlayGamePanel extends JPanel implements Observer {
                 questionLabel.setText("<html>" + questionLabel.getText() + "<br>" + lifeLinesPanel.getPhoneAFriendHelper().friendsResponse(ans) + "</html>");
                 setButtonTextBlank(ans);
             }
+        } else if (o instanceof WalkAwayController) { // walk away button was pressed
+            resetPanel();
         }
     }
 
@@ -245,6 +236,10 @@ public class PlayGamePanel extends JPanel implements Observer {
         lifeLinesPanel.getFiftyFiftyHelper().getButton().addActionListener(controller);
         lifeLinesPanel.getAskTheAudienceHelper().getButton().addActionListener(controller);
         lifeLinesPanel.getPhoneAFriendHelper().getButton().addActionListener(controller);
+    }
+    
+    public void setWalkAwayController(ActionListener controller) {
+        walkAwayButton.getWalkAwayButton().addActionListener(controller);
     }
 
     public void setQuestionAsked(Question q) {

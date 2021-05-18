@@ -12,6 +12,7 @@ import controllers.LoginController;
 import controllers.MenuNavController;
 import controllers.QuestionTimerController;
 import controllers.RulesController;
+import controllers.WalkAwayController;
 import game_db.GameDBManager;
 import gui_panels.HighscorePanel;
 import gui_panels.LoginPanel;
@@ -21,7 +22,6 @@ import gui_panels.RulesPanel;
 import java.awt.Color;
 import life_lines.AbstractPlayerGameHelp;
 import player.Player;
-import question.QuestionTimer;
 
 /**
  *
@@ -85,10 +85,12 @@ public class GameDriver {
         answerController.setGameView(gameView);
         timerController.setGameView(gameView);
         LifeLinesController lifeLinesController = new LifeLinesController(gameView, currentGameState);
+        WalkAwayController walkAwayController = new WalkAwayController(gameView, currentGameState, timerController.getQuestionTimerModel());
 
         // Adding observer to views
-        answerController.addObserver(gameView);
-        timerController.getQuestionTimerModel().addObserver(gameView);
+        answerController.addObserver(gameView); // button click on answer acts as model
+        timerController.getQuestionTimerModel().addObserver(gameView); // getting the model from the timer and adding it as observer
+        walkAwayController.addObserver(gameView); // button click on walk away acts as model
         AbstractPlayerGameHelp[] lifeLines = gameView.getLifeLines();
         for (AbstractPlayerGameHelp lifeLine : lifeLines) {
             lifeLine.addObserver(gameView);
@@ -97,6 +99,7 @@ public class GameDriver {
         // Adding controllers
         gameView.setAnswersController(answerController);
         gameView.setLifeLinesController(lifeLinesController);
+        gameView.setWalkAwayController(walkAwayController);
 
         // Setting up MVC for main menu functionality, note that the controller acts
         // as the model and view, as model is a primitive (see controller class for more info).
