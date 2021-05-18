@@ -26,7 +26,7 @@ public class Player extends Observable {
         }
         this.setHighscore(highscore);
         this.username = username;
-        this.currentHighscore = 0;
+        this.currentHighscore = highscore;
     }
 
     public Player() {
