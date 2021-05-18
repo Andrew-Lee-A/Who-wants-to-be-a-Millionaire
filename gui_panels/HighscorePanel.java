@@ -76,13 +76,20 @@ public class HighscorePanel extends JPanel implements Observer{
         tablePanel.setSize(400, 1000);
         
         //Set up table
-        DefaultTableModel model = new DefaultTableModel(data, columnNames);
+        DefaultTableModel model = new DefaultTableModel(data, columnNames){
+            @Override
+            public boolean isCellEditable(int row, int coloumn){
+                // all cells are false;
+                return false;
+            }
+        };
         table = new JTable(model);
         table.setForeground(Color.red);
         //table.setPreferredScrollableViewportSize(new Dimension(450,63));
         table.setFillsViewportHeight(true);
         table.getColumnModel().getColumn(0).setPreferredWidth(100);
         table.getColumnModel().getColumn(1).setPreferredWidth(100);
+        
         
         //Set up the table scroll bar
         JScrollPane scrollPane = new JScrollPane(table);
