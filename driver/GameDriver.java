@@ -47,7 +47,7 @@ public class GameDriver {
         selectedPanel.setSize(GAME_SIZE);
         selectedPanel.setLayout(card);
 
-        GameState currentGameState = new GameState(selectedPanel, card);
+        GameState currentGameState = GameState.getGameState(selectedPanel, card);
 
         // Create all panels to add to card layout...
         PlayGamePanel gameView;
