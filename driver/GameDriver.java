@@ -5,9 +5,11 @@ import java.awt.Dimension;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import animation.GameState;
+import controllers.AnswerController;
 import controllers.HighscoreController;
 import controllers.LoginController;
 import controllers.MenuNavController;
+import controllers.QuestionTimerController;
 import controllers.RulesController;
 import game_db.GameDBManager;
 import gui_panels.HighscorePanel;
@@ -16,7 +18,6 @@ import gui_panels.MainMenuPanel;
 import gui_panels.PlayGamePanel;
 import gui_panels.RulesPanel;
 import java.awt.Color;
-import java.awt.event.ActionListener;
 import player.Player;
 import question.QuestionTimer;
 
@@ -47,40 +48,47 @@ public class GameDriver {
         GameState currentGameState = new GameState(selectedPanel, card);
 
         // Create all panels to add to card layout...
-        PlayGamePanel playGamePanel;
-        playGamePanel = new PlayGamePanel(GAME_WIDTH, GAME_HEIGHT, currentGameState);
+        PlayGamePanel gameView;
 
         // Setting up MVC for login functionality
         LoginPanel loginView = new LoginPanel(GAME_WIDTH, GAME_HEIGHT, currentGameState, Color.black);
         LoginController loginController = new LoginController(playerModel, loginView);
         playerModel.addObserver(loginView);
         loginView.addLoginController(loginController);
-        
+
         //Setting up MVC for viewing highscores
         HighscorePanel highScoreView = new HighscorePanel(GAME_WIDTH, GAME_HEIGHT, currentGameState, Color.black);
         HighscoreController highScoreController = new HighscoreController(highScoreView);
         highScoreController.addObserver(highScoreView);
         highScoreView.addHighScoreController(highScoreController);
-        
+
         //Setting up MVC for viewing rules
         RulesPanel rulesView = new RulesPanel(GAME_WIDTH, GAME_HEIGHT, currentGameState, Color.black);
         RulesController rulesController = new RulesController(rulesView);
         rulesController.addObserver(rulesView);
         rulesView.addRulesController(rulesController);
+
+        // Setting up mvc for playing game
+        AnswerController answerController = new AnswerController(currentGameState);
+        QuestionTimerController timerController = new QuestionTimerController();
+        gameView = new PlayGamePanel(GAME_WIDTH, GAME_HEIGHT, currentGameState, timerController.getQuestionTimerModel(), answerController.getCurrentQuestion());
+        answerController.setGameView(gameView);
+        timerController.setGameView(gameView);
+        answerController.addObserver(gameView);
+        timerController.getQuestionTimerModel().addObserver(gameView);
+        gameView.setAnswersController(answerController);
         
         // Setting up MVC for main menu functionality, note that the controller acts
         // as the model and view, as model is a primitive (see controller class for more info).
-        QuestionTimer questionTimer = playGamePanel.getCounterTImer();
-        MainMenuPanel mainMenuView = new MainMenuPanel(GAME_SIZE, currentGameState, playGamePanel, questionTimer);
+        MainMenuPanel mainMenuView = new MainMenuPanel(GAME_SIZE, currentGameState, gameView, timerController.getQuestionTimerModel());
         MenuNavController mainMenuController = new MenuNavController(mainMenuView);
         mainMenuController.addObserver(mainMenuView);
         mainMenuView.addController(mainMenuController);
-        
 
         // set the panel transitions
         selectedPanel.add(loginView, LOGIN);
         selectedPanel.add(mainMenuView, MAIN_MENU);
-        selectedPanel.add(playGamePanel, PLAY_GAME);
+        selectedPanel.add(gameView, PLAY_GAME);
         selectedPanel.add(highScoreView, HIGHSCORES); //TODO make the panels!
         selectedPanel.add(rulesView, RULES);
         currentGameState.setLogin(LOGIN);
@@ -88,7 +96,6 @@ public class GameDriver {
         currentGameState.setPlayGame(PLAY_GAME);
         currentGameState.setHighscores(HIGHSCORES);
         currentGameState.setRules(RULES);
-        
 
         //start db
         GameDBManager.connectToDB();

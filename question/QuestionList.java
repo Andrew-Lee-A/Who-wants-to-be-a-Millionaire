@@ -2,7 +2,6 @@ package question;
 
 import java.util.ArrayList;
 import java.util.InputMismatchException;
-import java.util.Observable;
 import java.util.Random;
 
 /**
@@ -11,11 +10,22 @@ import java.util.Random;
  *
  * @author Rhys Van Rooyen Student ID: 19049569
  */
-public class QuestionList extends Observable {
-    private static ArrayList<Question> qList;
-    
-    public QuestionList() {
-        qList = QuestionList.selectQuestions();
+public class QuestionList {
+
+    private ArrayList<Question> list;
+    private static QuestionList questionList;
+    private int index;
+
+    private QuestionList() {
+    }
+
+    public static QuestionList getQuestionListInstance() {
+        if (questionList == null) {
+            questionList = new QuestionList();
+            reset();
+        }
+
+        return questionList;
     }
 
     /**
@@ -37,6 +47,30 @@ public class QuestionList extends Observable {
         }
 
         return selectedQuestions;
+    }
+
+    /**
+     * gets the question, and increments the index, notifies observers if index
+     * is now larger than 14 (incremented 15 elements)
+     *
+     * @return
+     */
+    public Question getQuestion() {
+        Question q = questionList.list.get(index++);
+        return q;
+    }
+
+    public static void reset() {
+        questionList.list = QuestionList.selectQuestions();
+        questionList.index = 0;
+    }
+
+    public int getIndex() {
+        return questionList.index;
+    }
+
+    public int getLength() {
+        return questionList.list.size();
     }
 
     /*
@@ -92,83 +126,83 @@ public class QuestionList extends Observable {
                 new Answer("Gold", true))));
 
         //8. How many levels are in The Simpsons: Hit & Run ?
-        questions.add(new Question("How many levels are in \"The Simpsons: Hit & Run\"?", createAnswer(         new Answer("7", true),
-         new Answer("10", false),
-         new Answer("12", false),
-         new Answer("21", false))));
+        questions.add(new Question("How many levels are in \"The Simpsons: Hit & Run\"?", createAnswer(new Answer("7", true),
+                new Answer("10", false),
+                new Answer("12", false),
+                new Answer("21", false))));
 
         //9. What is the average length of an Emu ?
-        questions.add(new Question("What is the average length of an Emu?", createAnswer(        //9. What is the average length of an Emu ?
-         new Answer("0.6 meters", false),
-         new Answer("0.8 meters", false),
-         new Answer("1.6 meters", false),
-         new Answer("1.8 meters", true))));
+        questions.add(new Question("What is the average length of an Emu?", createAnswer( //9. What is the average length of an Emu ?
+                new Answer("0.6 meters", false),
+                new Answer("0.8 meters", false),
+                new Answer("1.6 meters", false),
+                new Answer("1.8 meters", true))));
 
         //10. Which company created Java?
-        questions.add(new Question("Which company created Java?", createAnswer(         new Answer("Sun Microsystems, Inc.", true),
-         new Answer("Microsoft", false),
-         new Answer("Google", false),
-         new Answer("Apple", false))));
+        questions.add(new Question("Which company created Java?", createAnswer(new Answer("Sun Microsystems, Inc.", true),
+                new Answer("Microsoft", false),
+                new Answer("Google", false),
+                new Answer("Apple", false))));
 
         //11. In what year was Facebook created?
-        questions.add(new Question("In what year was Facebook created?", createAnswer(         new Answer("1998", false),
-         new Answer("2002", false),
-         new Answer("2004", true),
-         new Answer("2006", false))));
+        questions.add(new Question("In what year was Facebook created?", createAnswer(new Answer("1998", false),
+                new Answer("2002", false),
+                new Answer("2004", true),
+                new Answer("2006", false))));
 
         //12. What is main character in the Halo game series referred to as?
-        questions.add(new Question("What is main character in the Halo game series referred to as?", createAnswer(         new Answer("Master Chief", true),
-         new Answer("Spyro", false),
-         new Answer("Mschief Master", false),
-         new Answer("Steve", false))));
+        questions.add(new Question("What is main character in the Halo game series referred to as?", createAnswer(new Answer("Master Chief", true),
+                new Answer("Spyro", false),
+                new Answer("Mschief Master", false),
+                new Answer("Steve", false))));
 
         //13. Which country has the largest surface area?
-        questions.add(new Question("Which country has the largest surface area?", createAnswer(         new Answer("China", false),
-         new Answer("France", false),
-         new Answer("Russia", true),
-         new Answer("South Korea", false))));
+        questions.add(new Question("Which country has the largest surface area?", createAnswer(new Answer("China", false),
+                new Answer("France", false),
+                new Answer("Russia", true),
+                new Answer("South Korea", false))));
 
         //14. How many languages are there in the world?
-        questions.add(new Question("How many languages are there in the world?", createAnswer(         new Answer("5897", false),
-         new Answer("4201", false),
-         new Answer("7000", true),
-         new Answer("7201", false))));
+        questions.add(new Question("How many languages are there in the world?", createAnswer(new Answer("5897", false),
+                new Answer("4201", false),
+                new Answer("7000", true),
+                new Answer("7201", false))));
 
         //15. What is the capital of New Zealand?
-        questions.add(new Question("What is the capital of New Zealand?", createAnswer(         new Answer("Auckland", false),
-         new Answer("Wellington", true),
-         new Answer("Queenstown", false),
-         new Answer("Canberra", false))));
+        questions.add(new Question("What is the capital of New Zealand?", createAnswer(new Answer("Auckland", false),
+                new Answer("Wellington", true),
+                new Answer("Queenstown", false),
+                new Answer("Canberra", false))));
 
         //16. What year was the Nintendo Switch released?
-        questions.add(new Question("What year was the Nintendo Switch released?", createAnswer(         new Answer("2016", false),
-         new Answer("2017", true),
-         new Answer("2018", false),
-         new Answer("2019", false))));
+        questions.add(new Question("What year was the Nintendo Switch released?", createAnswer(new Answer("2016", false),
+                new Answer("2017", true),
+                new Answer("2018", false),
+                new Answer("2019", false))));
 
         //17. What was the tallest dinosaur?
-        questions.add(new Question("What was the tallest dinosaur?", createAnswer(        new Answer("Tyrannosaurus Rex", false),
-        new Answer("Megalosaurus", false),
-        new Answer("Sauroposeidon", true),
-        new Answer("Spinosaurus", false))));
+        questions.add(new Question("What was the tallest dinosaur?", createAnswer(new Answer("Tyrannosaurus Rex", false),
+                new Answer("Megalosaurus", false),
+                new Answer("Sauroposeidon", true),
+                new Answer("Spinosaurus", false))));
 
         //18. How much is a mcdonalds cheeseburger combo in New Zealand?
-        questions.add(new Question("How much is a mcdonalds cheeseburger combo in New Zealand?", createAnswer(        new Answer("$7.26", false),
-        new Answer("$7.84", false),
-        new Answer("$8.64", true),
-        new Answer("$9.12", false))));
+        questions.add(new Question("How much is a mcdonalds cheeseburger combo in New Zealand?", createAnswer(new Answer("$7.26", false),
+                new Answer("$7.84", false),
+                new Answer("$8.64", true),
+                new Answer("$9.12", false))));
 
         //19. Who painted the mona lisa?
-        questions.add(new Question("Who painted the mona lisa?", createAnswer(        new Answer("Leonardo da Vinci", true),
-        new Answer("Bob Ross", false),
-        new Answer("John Key", false),
-        new Answer("Will Smith", false))));
+        questions.add(new Question("Who painted the mona lisa?", createAnswer(new Answer("Leonardo da Vinci", true),
+                new Answer("Bob Ross", false),
+                new Answer("John Key", false),
+                new Answer("Will Smith", false))));
 
         //20. How many pandas are currently in the wild?
-        questions.add(new Question("How many pandas are currently in the wild?", createAnswer(        new Answer("1500", false),
-        new Answer("1725", false),
-        new Answer("1864", true),
-        new Answer("2069", false))));
+        questions.add(new Question("How many pandas are currently in the wild?", createAnswer(new Answer("1500", false),
+                new Answer("1725", false),
+                new Answer("1864", true),
+                new Answer("2069", false))));
 
         return questions;
     }

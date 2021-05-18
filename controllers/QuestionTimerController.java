@@ -13,12 +13,12 @@ import question.QuestionTimer;
 public class QuestionTimerController implements ActionListener {
 
     private final QuestionTimer questionTimerModel;
-    private final PlayGamePanel gameView;
+    private PlayGamePanel gameView;
 
     private final Color INTIAL_TIMER_COLOR = new Color(63, 255, 202);
 
-    public QuestionTimerController(PlayGamePanel gameView) {
-        this.gameView = gameView;
+    public QuestionTimerController() {
+        this.gameView = null;
         questionTimerModel = new QuestionTimer(this);
     }
 
@@ -40,5 +40,9 @@ public class QuestionTimerController implements ActionListener {
 
     public QuestionTimer getQuestionTimerModel() {
         return this.questionTimerModel;
+    }
+    
+    public void setGameView(PlayGamePanel gameView) {
+        this.gameView = gameView;
     }
 }

@@ -17,11 +17,13 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import animation.GameState;
+import controllers.AnswerController;
 import driver.PlayGame;
 import gui_components.WalkAwayButton;
 import java.util.Observable;
 import java.util.Observer;
 import player.Player;
+import question.QuestionList;
 import question.QuestionTimer;
 
 /**
@@ -40,54 +42,28 @@ public class PlayGamePanel extends JPanel implements Observer {
     private int panelHeight = 720;
     private final Color BACKGROUND_COLOR = new Color(0, 0, 0);
     private final GameState gameState;
-    private ArrayList<Question> questions;
-    private int currentQuestion;
+    private Question currentQuestionAsked;
     private final Color INTIAL_TIMER_COLOR = new Color(63, 255, 202);
+    private final QuestionTimer questionTimer;
 
-    public PlayGamePanel(int panelWidth, int panelHeight, GameState gameState) {
+    public PlayGamePanel(int panelWidth, int panelHeight, GameState gameState, QuestionTimer questionTimer, Question initialQuestion) {
         this.gameState = gameState;
         this.panelWidth = panelWidth;
         this.panelHeight = panelHeight;
-        questions = PlayGame.getNewQuestions();
-        currentQuestion = 0;
+        this.questionTimer = questionTimer;
+        currentQuestionAsked = initialQuestion;
 
         // Initialise attributes for panels
         walkAwayButton = new WalkAwayButton("Walk Away", new Dimension(100, 60), gameState);
         lifeLinesPanel = new LifeLinePanel(new Dimension(380, 60), gameState, new Color(64, 64, 206), new Color(64, 206, 135), BACKGROUND_COLOR, BACKGROUND_COLOR);
         answersPanel = new AnswerButtons(new Dimension((this.panelWidth - (2 * INSIDE_PADDING)), 320),
-                BACKGROUND_COLOR, new Color(64, 206, 135), new Color(255, 255, 255), INSIDE_PADDING, questions.get(currentQuestion).getAnswers());
-
-        // Setting the anonymous method for the answer questionButtons to update
-        JButton[] questionButtons = answersPanel.getButtons();
-        for (int i = 0; i < questionButtons.length; i++) {
-            questionButtons[i].addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    gameState.setLifeLineUsedThisRound(false);
-
-                    if (!(answersPanel.getCorrectButton() == e.getSource())) { // exit the game
-                        resetPanel();
-                        gameState.updateRecords();
-                        gameState.goToMainMenu();
-                    } else { // increment score and change the question
-                        answersPanel.setAnswers(questions.get(++currentQuestion).getAnswers());
-                        questionLabel.setText(questions.get(currentQuestion).getText());
-                        questionTimer.resetCounter();
-                        timerLabel.setText(questionTimer.getCounter().toString());
-                        timerLabel.setForeground(INTIAL_TIMER_COLOR);
-
-                        Player p = gameState.getPlayer();
-                        p.setHighscore(p.getCurrentHighscore() + 1);
-                    }
-                }
-            });
-        }
+                BACKGROUND_COLOR, new Color(64, 206, 135), new Color(255, 255, 255), INSIDE_PADDING, initialQuestion.getAnswers());
 
         // bind action listeners to lifelines
         setLifeLineListeners();
 
         // Creating the question label
-        questionLabel = new JLabel(questions.get(0).getText());
+        questionLabel = new JLabel(initialQuestion.getText());
         questionLabel.setSize(new Dimension(1000, 70));
         questionLabel.setForeground(Color.WHITE);
         questionLabel.setFont(new Font("", Font.BOLD, 26));
@@ -129,6 +105,16 @@ public class PlayGamePanel extends JPanel implements Observer {
         super.add(timerLabel);
     }
 
+    public void setAnswersController(ActionListener controller) {
+        JButton[] questionButtons = answersPanel.getButtons();
+        for (int i = 0; i < questionButtons.length; i++) {
+            questionButtons[i].addActionListener(controller);
+        }
+    }
+
+    public void setQuestionAsked(Question q) {
+        this.currentQuestionAsked = q;
+    }
 //    @Override
 //    public void actionPerformed(ActionEvent e) {
 //        if (questionTimer.getCounter() > 0) {
@@ -164,22 +150,21 @@ public class PlayGamePanel extends JPanel implements Observer {
      * this helper method allows the game to be put back into its initial state
      * with new questions supplied
      */
-//    private void resetPanel() {
-//        //Reset underlying values
-//        questions = PlayGame.resetGame(questionTimer, lifeLinesPanel);
-//
-//        //Reset timer styling
-//        timerLabel.setForeground(INTIAL_TIMER_COLOR);
-//        timerLabel.setText(questionTimer.getCounter().toString());
-//
-//        //Reset question styling
-//        currentQuestion = 0;
-//        questionLabel.setText(questions.get(currentQuestion).getText());
-//        answersPanel.setAnswers(questions.get(currentQuestion).getAnswers());
-//
-//        // Reset life lines styling
-//        lifeLinesPanel.resetLifeLineStyling();
-//    }
+    private void resetPanel() {
+
+        //Reset timer styling
+        timerLabel.setForeground(INTIAL_TIMER_COLOR);
+        timerLabel.setText(questionTimer.getCounter().toString());
+        questionTimer.resetCounter();
+
+        //Reset question styling
+        questionLabel.setText(currentQuestionAsked.getText());
+        answersPanel.setAnswers(currentQuestionAsked.getAnswers());
+
+        
+        // Reset life lines styling
+        lifeLinesPanel.resetLifeLineStyling();
+    }
 
     private void setLifeLineListeners() {
         lifeLinesPanel.getFiftyFiftyHelper().getButton().addActionListener(new ActionListener() {
@@ -191,7 +176,7 @@ public class PlayGamePanel extends JPanel implements Observer {
 
                     if (!lifeLine.isUsed()) {
                         gameState.setLifeLineUsedThisRound(true);
-                        setButtonTextBlank(lifeLine.getHelp(questions.get(currentQuestion)));
+                        setButtonTextBlank(lifeLine.getHelp(currentQuestionAsked));
                         lifeLine.setIsUsed(true);
                     }
                 }
@@ -208,7 +193,7 @@ public class PlayGamePanel extends JPanel implements Observer {
                     if (!lifeLine.isUsed()) {
                         gameState.setLifeLineUsedThisRound(true);
                         questionLabel.setText("<html>" + questionLabel.getText() + "<br>" + "the two most voted audience options are..." + "</html>");
-                        setButtonTextBlank(lifeLine.getHelp(questions.get(currentQuestion)));
+                        setButtonTextBlank(lifeLine.getHelp(currentQuestionAsked));
                         lifeLine.setIsUsed(true);
                     }
                 }
@@ -224,7 +209,7 @@ public class PlayGamePanel extends JPanel implements Observer {
 
                     if (!lifeLine.isUsed()) {
                         gameState.setLifeLineUsedThisRound(true);
-                        ArrayList<Answer> ans = lifeLine.getHelp(questions.get(currentQuestion));
+                        ArrayList<Answer> ans = lifeLine.getHelp(currentQuestionAsked);
                         questionLabel.setText("<html>" + questionLabel.getText() + "<br>" + lifeLinesPanel.getPhoneAFriendHelper().friendsResponse(ans) + "</html>");
                         setButtonTextBlank(ans);
                         lifeLine.setIsUsed(true);
@@ -257,12 +242,16 @@ public class PlayGamePanel extends JPanel implements Observer {
      *
      * @return QuestionTimer, returns the question timer
      */
-    public QuestionTimer getCounterTImer() {
+    public QuestionTimer getCounterTimer() {
         return questionTimer;
     }
-    
+
     public GameState getGameState() {
         return this.gameState;
+    }
+
+    public AnswerButtons getAnswersBtns() {
+        return this.answersPanel;
     }
 
     @Override
@@ -287,8 +276,19 @@ public class PlayGamePanel extends JPanel implements Observer {
             }
 
             timerLabel.setText(qt.getCounter().toString());
+        } else if (o instanceof AnswerController) {
+            
+            AnswerController ansModel = (AnswerController) o; // note the controller is also the model in this case
+            if (ansModel.isCorrectChoice()) {
+                answersPanel.setAnswers(currentQuestionAsked.getAnswers());
+                questionLabel.setText(currentQuestionAsked.getText());
+                questionTimer.resetCounter();
+                timerLabel.setText(questionTimer.getCounter().toString());
+                timerLabel.setForeground(INTIAL_TIMER_COLOR);
+            } else {
+                resetPanel();
+            }
         }
-        
-        
+
     }
 }

@@ -28,6 +28,8 @@ public class QuestionTimer extends Observable{
     
     public void stopTimer() {
         timer.stop();
+        this.setChanged();
+        this.notifyObservers(this);
     }
     
     public void decrementCounter() {
