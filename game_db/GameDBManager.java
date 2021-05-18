@@ -10,7 +10,7 @@ import java.util.Arrays;
 import player.Player;
 
 /**
- *
+ * singleton class used for managing database
  * @author Rhys Van Rooyen, Student ID: 19049569
  */
 public class GameDBManager {
@@ -20,8 +20,17 @@ public class GameDBManager {
     private final static String DB_URL = "jdbc:derby:WhoWantsToBeAMillionaireDB; create=true";
     private static Connection dbConnection;
     private static Statement statement;
+    private static GameDBManager dbManager = null;
 
-    public GameDBManager() {
+    private GameDBManager() {
+    }
+    
+    public static GameDBManager getDbManagerInstance() {
+        if(dbManager == null) {
+            dbManager = new GameDBManager();
+        }
+        
+        return dbManager;
     }
 
     /**

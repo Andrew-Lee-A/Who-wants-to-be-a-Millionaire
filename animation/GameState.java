@@ -8,13 +8,14 @@ import player.Player;
 /**
  * This class is used to model the current state of the game, i.e. the player
  * and their current score, the current panel or screen the game is at... etc
+ * this class is a singleton class
  *
  * @author Rhys Van Rooyen, Student ID: 19049569
  */
 public class GameState {
-
-    private final JPanel selectedPanel;
-    private final CardLayout cardLayout;
+    private static GameState gs = null;
+    private JPanel selectedPanel;
+    private CardLayout cardLayout;
     private boolean lifeLineUsedThisRound;
     private String login;
     private String mainMenu;
@@ -23,7 +24,7 @@ public class GameState {
     private String rules;
     private Player p;
 
-    public GameState(JPanel selectedPanel, CardLayout cardLayout) {
+    private GameState(JPanel selectedPanel, CardLayout cardLayout) {
         lifeLineUsedThisRound = false;
         this.selectedPanel = selectedPanel;
         this.cardLayout = cardLayout;
@@ -37,6 +38,22 @@ public class GameState {
 
         // set player to null on creation
         this.p = null;
+    }
+    
+    /**
+     * note this class will not change the selectedPanel, and card layout manager
+     * if it is already been created once... thus null can be parsed if the game state
+     * has already been created.
+     * @param selectedPanel the selected panels
+     * @param cardLayout the card layout
+     * @return 
+     */
+    public static GameState getGameState(JPanel selectedPanel, CardLayout cardLayout) {
+        if(gs == null) {
+            gs = new GameState(selectedPanel, cardLayout);
+        }
+        
+        return gs;
     }
 
     /**

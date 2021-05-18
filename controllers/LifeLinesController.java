@@ -6,8 +6,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import life_lines.AbstractPlayerGameHelp;
-import life_lines.AskTheAudience;
-import life_lines.FiftyFifty;
 
 /**
  * this class is used to represent the relationship between lifelines and the
