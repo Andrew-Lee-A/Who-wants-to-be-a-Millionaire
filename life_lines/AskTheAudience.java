@@ -44,5 +44,4 @@ public class AskTheAudience extends AbstractPlayerGameHelp {
         audienceResponses[1] = rand.nextInt(audienceNumber) + 15;
         return audienceResponses;
     }
-
 }

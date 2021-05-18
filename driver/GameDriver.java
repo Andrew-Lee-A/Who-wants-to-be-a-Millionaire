@@ -7,6 +7,7 @@ import javax.swing.JPanel;
 import animation.GameState;
 import controllers.AnswerController;
 import controllers.HighscoreController;
+import controllers.LifeLinesController;
 import controllers.LoginController;
 import controllers.MenuNavController;
 import controllers.QuestionTimerController;
@@ -18,6 +19,7 @@ import gui_panels.MainMenuPanel;
 import gui_panels.PlayGamePanel;
 import gui_panels.RulesPanel;
 import java.awt.Color;
+import life_lines.AbstractPlayerGameHelp;
 import player.Player;
 import question.QuestionTimer;
 
@@ -72,12 +74,24 @@ public class GameDriver {
         AnswerController answerController = new AnswerController(currentGameState);
         QuestionTimerController timerController = new QuestionTimerController();
         gameView = new PlayGamePanel(GAME_WIDTH, GAME_HEIGHT, currentGameState, timerController.getQuestionTimerModel(), answerController.getCurrentQuestion());
+
+        // Adding model & view to controllers
         answerController.setGameView(gameView);
         timerController.setGameView(gameView);
+        LifeLinesController lifeLinesController = new LifeLinesController(gameView, currentGameState);
+
+        // Adding observer to views
         answerController.addObserver(gameView);
         timerController.getQuestionTimerModel().addObserver(gameView);
+        AbstractPlayerGameHelp[] lifeLines = gameView.getLifeLines();
+        for (AbstractPlayerGameHelp lifeLine : lifeLines) {
+            lifeLine.addObserver(gameView);
+        }
+
+        // Adding controllers
         gameView.setAnswersController(answerController);
-        
+        gameView.setLifeLinesController(lifeLinesController);
+
         // Setting up MVC for main menu functionality, note that the controller acts
         // as the model and view, as model is a primitive (see controller class for more info).
         MainMenuPanel mainMenuView = new MainMenuPanel(GAME_SIZE, currentGameState, gameView, timerController.getQuestionTimerModel());

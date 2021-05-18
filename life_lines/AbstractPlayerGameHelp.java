@@ -1,6 +1,7 @@
 package life_lines;
 
 import java.util.ArrayList;
+import java.util.Observable;
 import javax.swing.JButton;
 import question.Answer;
 import question.Question;
@@ -11,7 +12,7 @@ import question.Question;
  *
  * @author Rhys Van Rooyen Student ID: 19049569
  */
-public abstract class AbstractPlayerGameHelp {
+public abstract class AbstractPlayerGameHelp extends Observable {
 
     protected boolean isUsed;
     protected JButton button;
@@ -21,6 +22,16 @@ public abstract class AbstractPlayerGameHelp {
         this.button = button; //note the button represents the revelavant lifeline
     }
 
+    
+    /**
+     * This method is explicitly used to notify observers of the lifeline being used
+     */
+    public void lifeLineUsed() {
+        isUsed = true;
+        setChanged();
+        notifyObservers(this);
+    }
+    
     public void setIsUsed(boolean used) {
         isUsed = used;
     }

@@ -68,11 +68,6 @@ public class LifeLinePanel extends JPanel {
         //tracked for removal when a button is pressed
         initialiseLifeLineHoverStyling();
 
-        //Add the on click even for the button
-//        fiftyFifty.getButton().addActionListener(new OnClick());
-//        phoneAFriend.getButton().addActionListener(new OnClick());
-//        askTheAudience.getButton().addActionListener(new OnClick());
-
         // pack panel with buttons and style panel
         super.setSize(d);
         super.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
@@ -82,18 +77,6 @@ public class LifeLinePanel extends JPanel {
         super.add(Box.createRigidArea(new Dimension(20, 0)), BoxLayout.X_AXIS);
         super.add(askTheAudience.getButton(), BoxLayout.X_AXIS);
         super.setBackground(panelBackgroundColor);
-    }
-
-    public FiftyFifty getFiftyFiftyHelper() {
-        return fiftyFifty;
-    }
-
-    public AskTheAudience getAskTheAudienceHelper() {
-        return askTheAudience;
-    }
-
-    public PhoneAFriend getPhoneAFriendHelper() {
-        return phoneAFriend;
     }
 
     /**
@@ -152,29 +135,12 @@ public class LifeLinePanel extends JPanel {
         setUnclickedColor();
         addOnHoverLifeLineStyling();
     }
-
-    /**
-     * private helper class used to remove the action listener rendering the
-     * button not usable after it has been used i.e. after its first click
-     */
-//    private class OnClick implements ActionListener {
-//
-//        @Override
-//        public void actionPerformed(ActionEvent event) {
-//            if (!gameState.isLifeLineUsedThisRound()) {
-//                if (event.getSource() == fiftyFifty.getButton()) {
-//                    fiftyFifty.getButton().removeMouseListener(fiftyFiftyHover);
-//                    fiftyFifty.getButton().setBackground(usedButtonColor);
-//                } else if (event.getSource() == phoneAFriend.getButton()) {
-//                    phoneAFriend.getButton().removeMouseListener(phoneAFriendHover);
-//                    phoneAFriend.getButton().setBackground(usedButtonColor);
-//                } else if (event.getSource() == askTheAudience.getButton()) {
-//                    askTheAudience.getButton().removeMouseListener(askTheAudienceHover);
-//                    askTheAudience.getButton().setBackground(usedButtonColor);
-//                }
-//            }
-//        }
-//    }
+    
+    public void resetLifeLinesUsed() {
+        fiftyFifty.setIsUsed(false);
+        askTheAudience.setIsUsed(false);
+        phoneAFriend.setIsUsed(false);
+    }
 
     public void buttonClicked(AbstractPlayerGameHelp lifeLine) {
         if (lifeLine instanceof FiftyFifty) {
@@ -187,5 +153,17 @@ public class LifeLinePanel extends JPanel {
             askTheAudience.getButton().removeMouseListener(askTheAudienceHover);
             askTheAudience.getButton().setBackground(usedButtonColor);
         }
+    }
+    
+        public FiftyFifty getFiftyFiftyHelper() {
+        return fiftyFifty;
+    }
+
+    public AskTheAudience getAskTheAudienceHelper() {
+        return askTheAudience;
+    }
+
+    public PhoneAFriend getPhoneAFriendHelper() {
+        return phoneAFriend;
     }
 }
