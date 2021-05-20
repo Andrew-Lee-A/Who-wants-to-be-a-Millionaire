@@ -73,7 +73,8 @@ public class HighscorePanel extends JPanel implements Observer{
        
         //Set up the table panel and the JTable to represent data
         JPanel tablePanel = new JPanel();
-        tablePanel.setSize(400, 1000);
+        tablePanel.setBackground(Color.black);
+        tablePanel.setSize(600, 1000);
         
         //Set up table
         DefaultTableModel model = new DefaultTableModel(data, columnNames){
@@ -103,6 +104,7 @@ public class HighscorePanel extends JPanel implements Observer{
         super.setSize(width, height);
         super.setLayout(new BorderLayout());
         super.setBackground(backgroundColor);
+        super.add(highscoreTitlePanel, BorderLayout.NORTH);
         super.add(back, BorderLayout.SOUTH);
         super.add(tablePanel, BorderLayout.CENTER);
     }    

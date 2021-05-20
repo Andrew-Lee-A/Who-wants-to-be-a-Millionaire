@@ -7,6 +7,7 @@ package gui_panels;
 
 import ReadRules.ReadRules;
 import animation.GameState;
+import animation.MoneyRain;
 import controllers.HighscoreController;
 import controllers.LoginController;
 import controllers.RulesController;
@@ -16,6 +17,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Observable;
@@ -31,6 +34,7 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.Timer;
 import javax.swing.table.DefaultTableModel;
 import player.Player;
 /**
@@ -46,6 +50,7 @@ public class RulesPanel extends JPanel implements Observer{
     private JPanel rulesPanel;
     private JLabel titleLabel;
     private JTextField rulesTextField;
+    
     
     public RulesPanel(int width, int height, GameState gameState, Color backgroundColor){
         this.gameState = gameState;
@@ -72,25 +77,35 @@ public class RulesPanel extends JPanel implements Observer{
         rulesTextField = new JTextField();
         //rulesTextField.setText(rules);
         //rulesTextField.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        rulesTextField.setText("\n\n\n\n\n\n\nhello");
+
         rulesTextField.setEditable(false);
-        rulesTextField.setMaximumSize(new Dimension(900, 500));
+        rulesTextField.setMaximumSize(new Dimension(500, 500));
         rulesPanel = new JPanel();
-        rulesPanel.setLayout(new BoxLayout(rulesPanel, BoxLayout.Y_AXIS));
-        rulesPanel.add(Box.createRigidArea(new Dimension(0,5)));
-       // rulesPanel.add(rulesTextField, BorderLayout.CENTER);
+        //rulesPanel.setLayout(new BoxLayout(rulesPanel, BoxLayout.Y_AXIS));
+        //rulesPanel.add(Box.createRigidArea(new Dimension(10,10)), BorderLayout.SOUTH);
+        rulesPanel.setLayout(new BorderLayout());
+        //rulesPanel.add(rulesTextField, BorderLayout.CENTER);
+        //rulesPanel.add(Box.createRigidArea(new Dimension(200, 680)), BorderLayout.SOUTH);
        
-       JTextArea jta = new JTextArea(rules);
-       rulesPanel.add(jta, BoxLayout.Y_AXIS);
+       JTextArea jta = new JTextArea("Hi");
+       jta.setEditable(false);
+       rulesPanel.add(jta, BorderLayout.CENTER);
+       Component rigidArea = Box.createRigidArea(new Dimension(50, 100));
+       rigidArea.setBackground(Color.BLACK);
+       rulesPanel.add(rigidArea, BorderLayout.SOUTH);
         
-        //rulesPanel.setSize(1280-400, 500);
+               
+   
         
 
         super.setLayout(new BorderLayout());
         super.setBackground(backgroundColor);
-        super.add(buttonPanel, BorderLayout.SOUTH);
-        super.add(titlePanel, BorderLayout.PAGE_START);
+        super.add(back, BorderLayout.SOUTH);
+        super.add(titlePanel, BorderLayout.CENTER);
         super.add(rulesPanel, BorderLayout.CENTER);
+        super.add(new moneyPanels(400, 720), BorderLayout.EAST);
+        super.add(new moneyPanels(400, 720), BorderLayout.WEST);
+        //super.add(Box.createRigidArea(new Dimension(400, 720)), BorderLayout.WEST);
 
         
     }    
@@ -113,5 +128,44 @@ public class RulesPanel extends JPanel implements Observer{
         }
         throw new IllegalArgumentException("Invalid button name");
     }
+    
+    private class moneyPanels extends JPanel implements ActionListener{
+        private final MoneyRain[] moneyRain;
+        private final int height, width;
+        private final Timer moneyTimer;
+        
+        public moneyPanels(int width, int height){
+            this.height = height;
+            this.width = width;
+            super.setPreferredSize(new Dimension(width, height));
+            super.setBackground(Color.black);
+            
+            moneyTimer = new Timer(10, this);
+            moneyTimer.start();
+        
+            moneyRain = new MoneyRain[10];
+            for (int i = 0; i < 10; i++) {
+                moneyRain[i] = new MoneyRain(this.width, this.height, "$");
+            }
+        }
+        @Override
+        public void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            for (MoneyRain m : moneyRain) {
+                m.drawMoney(g);
+            }
+        }
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            for (MoneyRain m : moneyRain) {
+                m.moveMoney();
+            }
+            super.repaint();
+        }
+    }
+    
 }
+    
+
+
 
