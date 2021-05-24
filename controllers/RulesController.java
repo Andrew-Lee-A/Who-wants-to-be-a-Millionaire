@@ -26,6 +26,7 @@ public class RulesController extends Observable implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == rulesView.getButton("back")){
+            System.out.println("back button pressed");
             modelSelection = "main menu";
             this.setChanged();
             this.notifyObservers();

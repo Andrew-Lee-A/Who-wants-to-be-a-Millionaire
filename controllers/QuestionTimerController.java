@@ -24,8 +24,7 @@ public class QuestionTimerController implements ActionListener {
         this.gameState = gameState;
         questionTimerModel = new QuestionTimer(this);
     }
-    
-    
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (questionTimerModel.getCounter() > 0) {
