@@ -1,11 +1,9 @@
 package controllers;
 
-import game_db.GameDBManager;
 import gui_panels.HighscorePanel;
 import gui_panels.MainMenuPanel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
 import java.util.Observable;
 
 /**
@@ -35,15 +33,12 @@ public class MenuNavController extends Observable implements ActionListener {
             this.setChanged();
             this.notifyObservers();
         } else if (e.getSource() == menuView.getButton("highscores")){
-            //Andrew TODO:
             menuView.getGameState().updateRecords();
             HighscorePanel.updateData();
-            //menuView.get
             modelSelection = "highscores";
             this.setChanged();
             this.notifyObservers();
         } else if (e.getSource() == menuView.getButton("rules")){
-            //Andrew TODO:
             modelSelection = "rules";
             this.setChanged();
             this.notifyObservers();
