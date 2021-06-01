@@ -1,6 +1,7 @@
 package question;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.InputMismatchException;
 import java.util.Random;
 
@@ -38,12 +39,12 @@ public class QuestionList {
         ArrayList<Question> allQuestions = allAvailableQuestions();
         ArrayList<Question> selectedQuestions = new ArrayList<>();
 
+        Collections.shuffle(allQuestions);
+
         Random rand = new Random();
 
         for (int i = 0; i < 15; i++) {
-            int indexSelected = rand.nextInt(allQuestions.size());
-            selectedQuestions.add(allQuestions.get(indexSelected));
-            allQuestions.remove(indexSelected);
+            selectedQuestions.add(allQuestions.get(i));
         }
 
         return selectedQuestions;
@@ -51,6 +52,7 @@ public class QuestionList {
 
     /**
      * gets the question at the current index
+     *
      * @param index to fetch
      * @return
      */
@@ -62,7 +64,7 @@ public class QuestionList {
     public void incrementIndex() {
         index++;
     }
-    
+
     public static void reset() {
         questionList.list = QuestionList.selectQuestions();
         questionList.index = 0;
@@ -228,5 +230,17 @@ public class QuestionList {
         }
 
         return new Answer[]{a, b, c, d};
+    }
+
+    @Override
+    public String toString() {
+        String s = "";
+        for (Question q : questionList.list) {
+            s += q.toString() + '\n';
+            s += "==================";
+        }
+        s += '\n';
+        
+        return s;
     }
 }

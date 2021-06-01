@@ -5,10 +5,12 @@ import gui_panels.PlayGamePanel;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import question.QuestionList;
 import question.QuestionTimer;
 
 /**
  * This class is used to control how the timer for each question works...
+ *
  * @author Rhys Van Rooyen, Student ID: 19049569
  */
 public class QuestionTimerController implements ActionListener {
@@ -33,17 +35,23 @@ public class QuestionTimerController implements ActionListener {
 
         if (questionTimerModel.getCounter() <= 0) {
             questionTimerModel.stopTimer();
-            questionTimerModel.resetCounter();
             gameState.updateRecords();
+            gameState.getPlayer().setHighscore(0);
+            QuestionList.reset();
+            QuestionList questionList = QuestionList.getQuestionListInstance();
+            gameView.setQuestionAsked(questionList.getQuestion(questionList.getIndex()));
+            questionList.incrementIndex();
+            questionTimerModel.decrementCounter(); // notify observers that highscore reset
             gameState.setLifeLineUsedThisRound(false);
             gameState.goToMainMenu();
+            questionTimerModel.resetCounter();
         }
     }
 
     public QuestionTimer getQuestionTimerModel() {
         return this.questionTimerModel;
     }
-    
+
     public void setGameView(PlayGamePanel gameView) {
         this.gameView = gameView;
     }

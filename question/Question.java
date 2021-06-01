@@ -45,5 +45,19 @@ public class Question {
     public Answer[] getAnswers() {
         return answers;
     }
+    
+    @Override
+    public String toString() {
+        String s = "";
+        
+        s += text + '\n';
+        
+        int i = 1;
+        for(Answer ans : answers) {
+            s += i++ + ") " + ans.getText() + '\n';
+        }
+        
+        return s;
+    }
 
 }

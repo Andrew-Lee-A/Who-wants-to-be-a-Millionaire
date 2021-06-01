@@ -5,11 +5,8 @@
  */
 package gui_panels;
 
-import ReadRules.ReadRules;
 import animation.GameState;
 import animation.MoneyRain;
-import controllers.HighscoreController;
-import controllers.LoginController;
 import controllers.RulesController;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -19,24 +16,16 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 import javax.swing.Timer;
-import javax.swing.table.DefaultTableModel;
-import player.Player;
 /**
  *
  * @author Andrew Lee 17983766
@@ -84,15 +73,15 @@ public class RulesPanel extends JPanel implements Observer{
         //Rules text
        JTextArea jta = new JTextArea("   There are 15 questions within a game every question will result in a point \n" +
 "    being earned (which is represented by some amount of money). However, if you\n" +
-"    get a question wrong you lose all your progress!!!!! \n" +
-"    Furthermore, you can walk away with your current points, and money \n" +
-"    at any question. Also you have 3 lifelines to help you become rich!\n" +
-"    Firstly 50/50 which will lower the amount of possible answers from 4 to 2,\n" +
+"    get a question wrong you will have to start again however, don't worry you get to\n" +
+"    keep your score ;)!!!!! Furthermore, you can choose to walk away at any time and\n" +
+"    keep your points, if you wish to leave. Also you have 3 lifelines to help you become\n" +
+"    rich! Firstly 50/50 which will lower the amount of possible answers from 4 to 2,\n" +
 "    phone a friend, where a friend will try help you get the correct answer, and\n" +
 "    lastly ask the audience where the audience will vote on what they think the\n" +
 "    answer is. Please note none of these lifelines completely give you the\n" +
 "    correct answer they just merely guide you! That's all for the rules, now go\n" +
-"    become a millionaire!! ");
+"    become a millionaire!! Note that only 1 life line may be used per round!!!!");
        
        jta.setEditable(false);
        Component rigidArea = Box.createRigidArea(new Dimension(50, 200));
