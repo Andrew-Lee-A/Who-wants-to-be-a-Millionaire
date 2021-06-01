@@ -19,6 +19,7 @@ import question.QuestionList;
  */
 public class AnswerController extends Observable implements ActionListener {
 
+    private final static int NUM_QUESTIONS = 15;
     private final GameState gameState;
     private PlayGamePanel gameView;
     private AnswerButtons answerView;
@@ -32,38 +33,44 @@ public class AnswerController extends Observable implements ActionListener {
         this.answerView = null;
         this.answerModel = true;
         questionList = QuestionList.getQuestionListInstance();
-        currentQuestion = questionList.getQuestion();
+        currentQuestion = questionList.getQuestion(0);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         gameState.setLifeLineUsedThisRound(false);
-        gameView.setQuestionAsked(questionList.getQuestion());
-        
+
+        if (questionList.getIndex() < NUM_QUESTIONS - 1) {
+            gameView.setQuestionAsked(questionList.getQuestion(questionList.getIndex() + 1)); // get the next question
+        }
+
         if (!(answerView.getCorrectButton() == e.getSource())) { // exit the game
             answerModel = false;
             questionList.reset();
+            gameState.updateRecords();
+            gameState.getPlayer().setHighscore(0);
             setChanged();
             notifyObservers(this);
-            gameState.updateRecords();
             gameState.goToMainMenu();
-            questionList.reset();
         } else { // increment score and change the question
+            Player p = gameState.getPlayer();
+            p.setHighscore(p.getCurrentHighscore() + 1);
             answerModel = true;
             setChanged();
             notifyObservers(this);
-            Player p = gameState.getPlayer();
-            p.setHighscore(p.getCurrentHighscore() + 1);
         }
 
-        if (questionList.getIndex() > questionList.getLength()) {
+        if (questionList.getIndex() == NUM_QUESTIONS - 1) {
             answerModel = false;
             questionList.reset();
+            gameState.updateRecords();
+            gameState.getPlayer().setHighscore(0);
             setChanged();
             notifyObservers(this);
-            gameState.updateRecords();
             gameState.goToMainMenu();
         }
+
+        questionList.incrementIndex();
     }
 
     public boolean isCorrectChoice() {

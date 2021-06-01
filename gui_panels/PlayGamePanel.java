@@ -22,6 +22,7 @@ import gui_components.WalkAwayButton;
 import java.util.Observable;
 import java.util.Observer;
 import life_lines.FiftyFifty;
+import player.Highscore;
 import question.QuestionTimer;
 
 /**
@@ -33,6 +34,7 @@ public class PlayGamePanel extends JPanel implements Observer {
     private WalkAwayButton walkAwayButton;
     private LifeLinePanel lifeLinesPanel;
     private final AnswerButtons answersPanel;
+    private final JLabel winningsLabel;
     private final JLabel questionLabel;
     private final JLabel timerLabel;
     private final int INSIDE_PADDING = 20;
@@ -66,8 +68,14 @@ public class PlayGamePanel extends JPanel implements Observer {
         // Creating the timer label
         timerLabel = new JLabel("60");
         timerLabel.setForeground(INTIAL_TIMER_COLOR);
-        timerLabel.setSize(100, 60);
+        timerLabel.setSize(100, 50);
         timerLabel.setFont(new Font("", Font.BOLD, 60));
+
+        // Creating winnings label
+        winningsLabel = new JLabel("$0");
+        winningsLabel.setForeground(new Color(64, 206, 135));
+        winningsLabel.setSize(600, 60);
+        winningsLabel.setFont(new Font("", Font.BOLD, 60));
 
         // Set the requirements for the frame
         super.setSize(new Dimension(this.panelWidth, this.panelHeight));
@@ -79,6 +87,7 @@ public class PlayGamePanel extends JPanel implements Observer {
         answersPanel.setLocation(new Point(INSIDE_PADDING, 320));
         questionLabel.setLocation(new Point(200, 200));
         timerLabel.setLocation(new Point((2 * INSIDE_PADDING) + 100, INSIDE_PADDING));
+        winningsLabel.setLocation(new Point((2 * INSIDE_PADDING) + 300, INSIDE_PADDING));
 
         // Add relevant J components
         super.setBackground(BACKGROUND_COLOR);
@@ -87,6 +96,7 @@ public class PlayGamePanel extends JPanel implements Observer {
         super.add(answersPanel);
         super.add(questionLabel);
         super.add(timerLabel);
+        super.add(winningsLabel);
     }
 
     /**
@@ -98,7 +108,7 @@ public class PlayGamePanel extends JPanel implements Observer {
         //Reset timer styling
         timerLabel.setForeground(INTIAL_TIMER_COLOR);
         timerLabel.setText("60");
-        
+
         //Reset question styling
         questionLabel.setText(currentQuestionAsked.getText());
         answersPanel.setAnswers(currentQuestionAsked.getAnswers());
@@ -106,6 +116,9 @@ public class PlayGamePanel extends JPanel implements Observer {
         // Reset life lines styling
         lifeLinesPanel.resetLifeLineStyling();
         lifeLinesPanel.resetLifeLinesUsed();
+
+        // Reset winnings label
+        winningsLabel.setText("$0");
         this.repaint();
     }
 
@@ -160,6 +173,8 @@ public class PlayGamePanel extends JPanel implements Observer {
                 questionTimer.resetCounter();
                 timerLabel.setText(questionTimer.getCounter().toString());
                 timerLabel.setForeground(INTIAL_TIMER_COLOR);
+                winningsLabel.setText(new Highscore(gameState.getPlayer().getUsername(),
+                        gameState.getPlayer().getCurrentHighscore()).getWinnings().toString());
             } else {
                 resetPanel();
                 questionTimer.stopTimer();
@@ -237,7 +252,7 @@ public class PlayGamePanel extends JPanel implements Observer {
         lifeLinesPanel.getAskTheAudienceHelper().getButton().addActionListener(controller);
         lifeLinesPanel.getPhoneAFriendHelper().getButton().addActionListener(controller);
     }
-    
+
     public void setWalkAwayController(ActionListener controller) {
         walkAwayButton.getWalkAwayButton().addActionListener(controller);
     }

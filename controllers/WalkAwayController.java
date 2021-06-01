@@ -5,6 +5,7 @@ import gui_panels.PlayGamePanel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Observable;
+import question.QuestionList;
 import question.QuestionTimer;
 
 /**
@@ -27,11 +28,13 @@ public class WalkAwayController extends Observable implements ActionListener {
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        setChanged();
-        notifyObservers(this);
         questionTimer.resetCounter();
         questionTimer.stopTimer();
         gameState.updateRecords();
+        gameState.getPlayer().setHighscore(0);
+        QuestionList.reset();
+        setChanged();
+        notifyObservers(this);
         gameState.setLifeLineUsedThisRound(false);
         gameState.goToMainMenu();
     }

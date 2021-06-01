@@ -62,7 +62,7 @@ public enum WinningAmount {
                 winnings += "$64,000";
                 break;
             case 12:
-                winnings += "125,000";
+                winnings += "$125,000";
                 break;
             case 13:
                 winnings += "$250,000";

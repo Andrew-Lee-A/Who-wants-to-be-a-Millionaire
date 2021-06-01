@@ -50,16 +50,19 @@ public class QuestionList {
     }
 
     /**
-     * gets the question, and increments the index, notifies observers if index
-     * is now larger than 14 (incremented 15 elements)
-     *
+     * gets the question at the current index
+     * @param index to fetch
      * @return
      */
-    public Question getQuestion() {
-        Question q = questionList.list.get(index++);
+    public Question getQuestion(int index) {
+        Question q = questionList.list.get(index);
         return q;
     }
 
+    public void incrementIndex() {
+        index++;
+    }
+    
     public static void reset() {
         questionList.list = QuestionList.selectQuestions();
         questionList.index = 0;
