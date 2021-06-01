@@ -1,12 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package gui_panels;
 
 import gui_components.AnswerButtons;
-import question.QuestionList;
 import question.Answer;
 import question.Question;
 import life_lines.PhoneAFriend;
@@ -16,93 +10,72 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.Timer;
-import animation.CurrentPanel;
+import animation.GameState;
+import controllers.AnswerController;
+import controllers.WalkAwayController;
 import gui_components.WalkAwayButton;
+import java.util.Observable;
+import java.util.Observer;
+import life_lines.FiftyFifty;
+import player.Highscore;
+import question.QuestionTimer;
 
 /**
  *
  * @author Rhys Van Rooyen, Student ID: 19049569
  */
-public class PlayGamePanel extends JPanel implements ActionListener {
+public class PlayGamePanel extends JPanel implements Observer {
 
     private WalkAwayButton walkAwayButton;
     private LifeLinePanel lifeLinesPanel;
-    private AnswerButtons answersPanel;
-    private JLabel questionLabel;
-    private JLabel timerLabel;
-    private final Timer timer;
-    private Integer counter;
+    private final AnswerButtons answersPanel;
+    private final JLabel winningsLabel;
+    private final JLabel questionLabel;
+    private final JLabel timerLabel;
     private final int INSIDE_PADDING = 20;
     private int panelWidth = 1280;
     private int panelHeight = 720;
-    private final Color BACKGROUND_COLOR = new Color(12, 15, 18);
-    private final CurrentPanel currentPanel;
-    private ArrayList<Question> questions;
-    private int currentQuestion;
+    private final Color BACKGROUND_COLOR = new Color(0, 0, 0);
+    private final GameState gameState;
+    private Question currentQuestionAsked;
+    private final Color INTIAL_TIMER_COLOR = new Color(63, 255, 202);
+    private final QuestionTimer questionTimer;
 
-    public PlayGamePanel(int panelWidth, int panelHeight, CurrentPanel currentPanel) {
-        this.currentPanel = currentPanel;
+    public PlayGamePanel(int panelWidth, int panelHeight, GameState gameState, QuestionTimer questionTimer, Question initialQuestion) {
+        this.gameState = gameState;
         this.panelWidth = panelWidth;
         this.panelHeight = panelHeight;
-        setQuestions();
-        currentQuestion = 0;
+        this.questionTimer = questionTimer;
+        currentQuestionAsked = initialQuestion;
 
         // Initialise attributes for panels
-        walkAwayButton = new WalkAwayButton("Walk Away", new Dimension(100, 60), currentPanel);
-        lifeLinesPanel = new LifeLinePanel(new Dimension(380, 60), new Color(64, 64, 206), new Color(64, 206, 135), BACKGROUND_COLOR, new Color(206, 64, 64));
+        walkAwayButton = new WalkAwayButton("Walk Away", new Dimension(100, 60), gameState);
+        lifeLinesPanel = new LifeLinePanel(new Dimension(380, 60), gameState, new Color(64, 64, 206), new Color(64, 206, 135), BACKGROUND_COLOR, BACKGROUND_COLOR);
         answersPanel = new AnswerButtons(new Dimension((this.panelWidth - (2 * INSIDE_PADDING)), 320),
-                BACKGROUND_COLOR, new Color(64, 206, 135), new Color(255, 255, 255), INSIDE_PADDING, questions.get(currentQuestion).getAnswers());
-
-        // Setting the anonymous method for the answer questionButtons to update
-        JButton[] questionButtons = answersPanel.getButtons();
-        for (int i = 0; i < questionButtons.length; i++) {
-            questionButtons[i].addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    if (!(answersPanel.getCorrectButton() == e.getSource())) {
-                        resetGame();
-                        currentPanel.goToMainMenu();
-                    } else {
-                        answersPanel.setAnswers(questions.get(++currentQuestion).getAnswers());
-                        questionLabel.setText(questions.get(currentQuestion).getText());
-                        counter = 60;
-                        timerLabel.setText(counter.toString());
-                    }
-                }
-            });
-        }
-
-        // bind action listeners to lifelines
-        setLifeLineListeners();
+                BACKGROUND_COLOR, new Color(64, 206, 135), new Color(255, 255, 255), INSIDE_PADDING, initialQuestion.getAnswers());
 
         // Creating the question label
-        questionLabel = new JLabel(questions.get(0).getText());
+        questionLabel = new JLabel(initialQuestion.getText());
         questionLabel.setSize(new Dimension(1000, 70));
         questionLabel.setForeground(Color.WHITE);
         questionLabel.setFont(new Font("", Font.BOLD, 26));
 
         // Creating the timer label
-        counter = 60;
-        timerLabel = new JLabel(counter.toString());
-        timerLabel.setForeground(new Color(63, 255, 202));
-        timerLabel.setSize(100, 60);
+        timerLabel = new JLabel("60");
+        timerLabel.setForeground(INTIAL_TIMER_COLOR);
+        timerLabel.setSize(100, 50);
         timerLabel.setFont(new Font("", Font.BOLD, 60));
 
-        // Adding walk away features
-        walkAwayButton.getWalkAwayButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                resetGame();
-                currentPanel.goToMainMenu();
-            }
-        });
+        // Creating winnings label
+        winningsLabel = new JLabel("$0");
+        winningsLabel.setForeground(new Color(64, 206, 135));
+        winningsLabel.setSize(600, 60);
+        winningsLabel.setFont(new Font("", Font.BOLD, 60));
 
         // Set the requirements for the frame
         super.setSize(new Dimension(this.panelWidth, this.panelHeight));
@@ -114,6 +87,7 @@ public class PlayGamePanel extends JPanel implements ActionListener {
         answersPanel.setLocation(new Point(INSIDE_PADDING, 320));
         questionLabel.setLocation(new Point(200, 200));
         timerLabel.setLocation(new Point((2 * INSIDE_PADDING) + 100, INSIDE_PADDING));
+        winningsLabel.setLocation(new Point((2 * INSIDE_PADDING) + 300, INSIDE_PADDING));
 
         // Add relevant J components
         super.setBackground(BACKGROUND_COLOR);
@@ -122,101 +96,30 @@ public class PlayGamePanel extends JPanel implements ActionListener {
         super.add(answersPanel);
         super.add(questionLabel);
         super.add(timerLabel);
-        timer = new Timer(1000, this);
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (counter > 0) {
-            counter--;
-            switch (counter) {
-                case 40:
-                    timerLabel.setForeground(new Color(220, 255, 0));
-                    break;
-                case 20:
-                    timerLabel.setForeground(new Color(255, 169, 0));
-                    break;
-                case 10:
-                    timerLabel.setForeground(new Color(221, 41, 34));
-                    break;
-            }
-
-            timerLabel.setText(counter.toString());
-        }
-
-        if (counter <= 0) {
-            timer.stop();
-            counter = 60;
-            timerLabel.setForeground(new Color(63, 255, 202));
-            timerLabel.setText(counter.toString());
-            currentPanel.goToMainMenu();
-        }
+        super.add(winningsLabel);
     }
 
     /**
      * this helper method allows the game to be put back into its initial state
      * with new questions supplied
      */
-    private void resetGame() {
-        // reset timer
-        counter = 60;
-        timer.stop();
-        timerLabel.setForeground(new Color(63, 255, 202));
-        timerLabel.setText(counter.toString());
-        
-        // reset questions
-        setQuestions();
-        currentQuestion = 0;
-        questionLabel.setText(questions.get(currentQuestion).getText());
-        answersPanel.setAnswers(questions.get(currentQuestion).getAnswers());
-        
-        // Reset life lines
-        lifeLinesPanel.getFiftyFiftyHelper().setIsUsed(false);
-        lifeLinesPanel.getAskTheAudienceHelper().setIsUsed(false);
-        lifeLinesPanel.getPhoneAFriendHelper().setIsUsed(false);
+    private void resetPanel() {
+
+        //Reset timer styling
+        timerLabel.setForeground(INTIAL_TIMER_COLOR);
+        timerLabel.setText("60");
+
+        //Reset question styling
+        questionLabel.setText(currentQuestionAsked.getText());
+        answersPanel.setAnswers(currentQuestionAsked.getAnswers());
+
+        // Reset life lines styling
         lifeLinesPanel.resetLifeLineStyling();
-        
-    }
+        lifeLinesPanel.resetLifeLinesUsed();
 
-    private void setLifeLineListeners() {
-        lifeLinesPanel.getFiftyFiftyHelper().getButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                AbstractPlayerGameHelp lifeLine = lifeLinesPanel.getFiftyFiftyHelper();
-
-                if (!lifeLine.isUsed()) {
-                    setButtonTextBlank(lifeLine.getHelp(questions.get(currentQuestion)));
-                    lifeLine.setIsUsed(true);
-                }
-            }
-        });
-
-        lifeLinesPanel.getAskTheAudienceHelper().getButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                AskTheAudience lifeLine = lifeLinesPanel.getAskTheAudienceHelper();
-
-                if (!lifeLine.isUsed()) {
-                    questionLabel.setText("<html>" + questionLabel.getText() + "<br>" + "the two most voted audience options are..." + "</html>");
-                    setButtonTextBlank(lifeLine.getHelp(questions.get(currentQuestion)));
-                    lifeLine.setIsUsed(true);
-                }
-            }
-        });
-
-        lifeLinesPanel.getPhoneAFriendHelper().getButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                PhoneAFriend lifeLine = lifeLinesPanel.getPhoneAFriendHelper();
-
-                if (!lifeLine.isUsed()) {
-                    ArrayList<Answer> ans = lifeLine.getHelp(questions.get(currentQuestion));
-                    questionLabel.setText("<html>" + questionLabel.getText() + "<br>" + lifeLinesPanel.getPhoneAFriendHelper().friendsResponse(ans) + "</html>");
-                    setButtonTextBlank(ans);
-                    lifeLine.setIsUsed(true);
-                }
-            }
-        });
+        // Reset winnings label
+        winningsLabel.setText("$0");
+        this.repaint();
     }
 
     /**
@@ -237,20 +140,124 @@ public class PlayGamePanel extends JPanel implements ActionListener {
         }
     }
 
-    /**
-     * Used to set new questions
-     */
-    public void setQuestions() {
-        questions = QuestionList.selectQuestions();
+    @Override
+    public void update(Observable o, Object arg) {
+        if (o instanceof QuestionTimer) { // the timer label is being changed
+            QuestionTimer qt = (QuestionTimer) o;
+
+            switch (qt.getCounter()) {
+                case 40:
+                    timerLabel.setForeground(new Color(220, 255, 0));
+                    break;
+                case 20:
+                    timerLabel.setForeground(new Color(255, 169, 0));
+                    break;
+                case 10:
+                    timerLabel.setForeground(new Color(221, 41, 34));
+                    break;
+                case 0:
+                    resetPanel();
+                    break;
+            }
+
+            if (qt.getCounter() > 0) { // only redraw the counter if set
+                timerLabel.setText(qt.getCounter().toString());
+            }
+
+        } else if (o instanceof AnswerController) { // if an answer has been clicked adjust styling
+
+            AnswerController ansModel = (AnswerController) o; // note the controller is also the model in this case
+            if (ansModel.isCorrectChoice()) {
+                answersPanel.setAnswers(currentQuestionAsked.getAnswers());
+                questionLabel.setText(currentQuestionAsked.getText());
+                questionTimer.resetCounter();
+                timerLabel.setText(questionTimer.getCounter().toString());
+                timerLabel.setForeground(INTIAL_TIMER_COLOR);
+                winningsLabel.setText(new Highscore(gameState.getPlayer().getUsername(),
+                        gameState.getPlayer().getCurrentHighscore()).getWinnings().toString());
+            } else {
+                resetPanel();
+                questionTimer.stopTimer();
+                questionTimer.resetCounter();
+            }
+        } else if (o instanceof AbstractPlayerGameHelp) { // if a life line has been clicked adjust styling
+
+            if (o instanceof FiftyFifty && !gameState.isLifeLineUsedThisRound()) { // fifty fifty
+                AbstractPlayerGameHelp lifeLine = lifeLinesPanel.getFiftyFiftyHelper();
+                lifeLinesPanel.buttonClicked(lifeLine);
+                setButtonTextBlank(lifeLine.getHelp(currentQuestionAsked));
+
+            } else if (o instanceof AskTheAudience && !gameState.isLifeLineUsedThisRound()) { // ask the audience
+                AskTheAudience lifeLine = lifeLinesPanel.getAskTheAudienceHelper();
+                lifeLinesPanel.buttonClicked(lifeLine);
+                questionLabel.setText("<html>" + questionLabel.getText() + "<br>" + "the two most voted audience options are..." + "</html>");
+                setButtonTextBlank(lifeLine.getHelp(currentQuestionAsked));
+
+            } else if (o instanceof PhoneAFriend && !gameState.isLifeLineUsedThisRound()) { // phone a friend
+                PhoneAFriend lifeLine = lifeLinesPanel.getPhoneAFriendHelper();
+                lifeLinesPanel.buttonClicked(lifeLine);
+                ArrayList<Answer> ans = lifeLine.getHelp(currentQuestionAsked);
+                questionLabel.setText("<html>" + questionLabel.getText() + "<br>" + lifeLinesPanel.getPhoneAFriendHelper().friendsResponse(ans) + "</html>");
+                setButtonTextBlank(ans);
+            }
+        } else if (o instanceof WalkAwayController) { // walk away button was pressed
+            resetPanel();
+        }
     }
 
     /**
-     * Used to get the timer
+     * Used to get the question timer object
      *
-     * @return Timer, returns the counters timer
+     * @return QuestionTimer, returns the question timer
      */
-    public Timer getCounterTImer() {
-        return timer;
+    public QuestionTimer getCounterTimer() {
+        return questionTimer;
     }
 
+    public AnswerButtons getAnswersBtns() {
+        return this.answersPanel;
+    }
+
+    /**
+     * returns the lifelines in the game
+     *
+     * @return index 0 represents the fifty fifty, 1 the ask the audience and 2
+     * the phone a friend....
+     */
+    public AbstractPlayerGameHelp[] getLifeLines() {
+        return (new AbstractPlayerGameHelp[]{lifeLinesPanel.getFiftyFiftyHelper(), lifeLinesPanel.getAskTheAudienceHelper(), lifeLinesPanel.getPhoneAFriendHelper()});
+    }
+
+    public JButton getFiftyFiftyButton() {
+        return lifeLinesPanel.getFiftyFiftyHelper().getButton();
+    }
+
+    public JButton getAskTheAudienceButton() {
+        return lifeLinesPanel.getAskTheAudienceHelper().getButton();
+    }
+
+    public JButton getPhoneAFriendButton() {
+        return lifeLinesPanel.getPhoneAFriendHelper().getButton();
+    }
+
+    public void setAnswersController(ActionListener controller) {
+        JButton[] questionButtons = answersPanel.getButtons();
+        for (int i = 0; i < questionButtons.length; i++) {
+            questionButtons[i].addActionListener(controller);
+        }
+    }
+
+    public void setLifeLinesController(ActionListener controller) {
+        lifeLinesPanel.getFiftyFiftyHelper().getButton().addActionListener(controller);
+        lifeLinesPanel.getAskTheAudienceHelper().getButton().addActionListener(controller);
+        lifeLinesPanel.getPhoneAFriendHelper().getButton().addActionListener(controller);
+    }
+
+    public void setWalkAwayController(ActionListener controller) {
+        walkAwayButton.getWalkAwayButton().addActionListener(controller);
+    }
+
+    public void setQuestionAsked(Question q) {
+        this.currentQuestionAsked = q;
+    }
 }
