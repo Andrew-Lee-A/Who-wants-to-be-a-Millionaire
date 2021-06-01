@@ -12,7 +12,7 @@ import java.util.Observable;
 
 /**
  *
- * @author Lee5
+ * @author Andrew Lee 17983766
  */
 public class RulesController extends Observable implements ActionListener{
     private final RulesPanel rulesView;
@@ -26,7 +26,6 @@ public class RulesController extends Observable implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == rulesView.getButton("back")){
-            System.out.println("back button pressed");
             modelSelection = "main menu";
             this.setChanged();
             this.notifyObservers();

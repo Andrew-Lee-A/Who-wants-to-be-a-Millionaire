@@ -55,6 +55,7 @@ public class RulesPanel extends JPanel implements Observer{
     public RulesPanel(int width, int height, GameState gameState, Color backgroundColor){
         this.gameState = gameState;
         
+        //Set up the rules label
         titleLabel = new JLabel("RULES");
         titleLabel.setFont(new Font("", Font.BOLD, 16));
         titleLabel.setSize(400,100);
@@ -64,50 +65,52 @@ public class RulesPanel extends JPanel implements Observer{
         titlePanel.setBackground(Color.black);
         titlePanel.add(titleLabel);
         
+        //set up back button and back panel
         back = new JButton("Back");
         back.setMaximumSize(new Dimension(200, 75));
         back.setBackground(new Color(213, 53, 42));
         back.setForeground(Color.white);
         back.setFocusable(false);
-        
         buttonPanel = new JPanel();
         buttonPanel.add(back);
-        
-        String rules = ReadRules.getRules();
-        rulesTextField = new JTextField();
-        //rulesTextField.setText(rules);
-        //rulesTextField.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-        rulesTextField.setEditable(false);
-        rulesTextField.setMaximumSize(new Dimension(500, 500));
-        rulesPanel = new JPanel();
-        //rulesPanel.setLayout(new BoxLayout(rulesPanel, BoxLayout.Y_AXIS));
-        //rulesPanel.add(Box.createRigidArea(new Dimension(10,10)), BorderLayout.SOUTH);
-        rulesPanel.setLayout(new BorderLayout());
-        //rulesPanel.add(rulesTextField, BorderLayout.CENTER);
-        //rulesPanel.add(Box.createRigidArea(new Dimension(200, 680)), BorderLayout.SOUTH);
        
-       JTextArea jta = new JTextArea("Hi");
+        //Set up textfield for rules
+        rulesTextField = new JTextField();
+        rulesTextField.setEditable(false);
+        rulesTextField.setSize(new Dimension(500, 500));
+        rulesPanel = new JPanel();
+        rulesPanel.setLayout(new BorderLayout());
+        
+        //Rules text
+       JTextArea jta = new JTextArea("   There are 15 questions within a game every question will result in a point \n" +
+"    being earned (which is represented by some amount of money). However, if you\n" +
+"    get a question wrong you lose all your progress!!!!! \n" +
+"    Furthermore, you can walk away with your current points, and money \n" +
+"    at any question. Also you have 3 lifelines to help you become rich!\n" +
+"    Firstly 50/50 which will lower the amount of possible answers from 4 to 2,\n" +
+"    phone a friend, where a friend will try help you get the correct answer, and\n" +
+"    lastly ask the audience where the audience will vote on what they think the\n" +
+"    answer is. Please note none of these lifelines completely give you the\n" +
+"    correct answer they just merely guide you! That's all for the rules, now go\n" +
+"    become a millionaire!! ");
+       
        jta.setEditable(false);
-       rulesPanel.add(jta, BorderLayout.CENTER);
-       Component rigidArea = Box.createRigidArea(new Dimension(50, 100));
+       Component rigidArea = Box.createRigidArea(new Dimension(50, 200));
        rigidArea.setBackground(Color.BLACK);
        rulesPanel.add(rigidArea, BorderLayout.SOUTH);
-        
-               
-   
-        
+       rulesPanel.add(jta, BorderLayout.CENTER);
+       rulesPanel.setBackground(Color.BLACK);
 
         super.setLayout(new BorderLayout());
         super.setBackground(backgroundColor);
+        super.setSize(width, height);
         super.add(back, BorderLayout.SOUTH);
-        super.add(titlePanel, BorderLayout.CENTER);
+        super.add(titlePanel, BorderLayout.NORTH);
         super.add(rulesPanel, BorderLayout.CENTER);
-        super.add(new moneyPanels(400, 720), BorderLayout.EAST);
-        super.add(new moneyPanels(400, 720), BorderLayout.WEST);
-        //super.add(Box.createRigidArea(new Dimension(400, 720)), BorderLayout.WEST);
-
         
+        //Money thread
+        super.add(new moneyPanels(400, 720), BorderLayout.EAST);
+        super.add(new moneyPanels(400, 720), BorderLayout.WEST);     
     }    
     
     public void addRulesController(RulesController controller){
