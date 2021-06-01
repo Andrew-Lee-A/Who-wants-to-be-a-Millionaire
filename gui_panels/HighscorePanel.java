@@ -6,12 +6,16 @@
 package gui_panels;
 
 import animation.GameState;
+import animation.MoneyRain;
 import controllers.HighscoreController;
 import game_db.GameDBManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Observable;
@@ -23,6 +27,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.Timer;
 import javax.swing.table.DefaultTableModel;
 import player.Player;
 /**
@@ -59,13 +64,6 @@ public class HighscorePanel extends JPanel implements Observer{
         back.setForeground(Color.white);
         back.setFocusable(false);
         
-        
-        
-//        String[][] data = {
-//            {"Andrew","5"}, {"Kerry","2"}, {"Cheema","3"},
-//            {"Carrie","14"}, {"Rhys","9"}, {"Steffan","1"}
-//        };
-
         //Set up database data for JTable
         String[] columnNames = {"Player", "HighScore"};
         //data;
@@ -87,7 +85,6 @@ public class HighscorePanel extends JPanel implements Observer{
         };
         table = new JTable(model);
         table.setForeground(Color.red);
-        //table.setPreferredScrollableViewportSize(new Dimension(450,63));
         table.setFillsViewportHeight(true);
         table.getColumnModel().getColumn(0).setPreferredWidth(100);
         table.getColumnModel().getColumn(1).setPreferredWidth(100);
@@ -99,15 +96,14 @@ public class HighscorePanel extends JPanel implements Observer{
         scrollPane.setVisible(true);
         tablePanel.add(scrollPane);
         
-  
-        
-        
         super.setSize(width, height);
         super.setLayout(new BorderLayout());
         super.setBackground(backgroundColor);
         super.add(highscoreTitlePanel, BorderLayout.NORTH);
         super.add(back, BorderLayout.SOUTH);
         super.add(tablePanel, BorderLayout.CENTER);
+        super.add(new moneyPanels(400, 720), BorderLayout.EAST);
+        super.add(new moneyPanels(400, 720), BorderLayout.WEST);
     }    
     
     public void addHighScoreController(HighscoreController controller){
@@ -122,12 +118,6 @@ public class HighscorePanel extends JPanel implements Observer{
         }
     }
     
-    /**
-     * takes a string and returns the related button
-     * @param btnName
-     * @return
-     * @throws IllegalArgumentException 
-     */
     public JButton getButton(String btnName) throws IllegalArgumentException{
         if(btnName.equalsIgnoreCase("back")){
             return this.back;
@@ -167,17 +157,11 @@ public class HighscorePanel extends JPanel implements Observer{
         return data;
     }
     
+    /**
+     * Static method to retrieve new highscores and update the model
+     */
     public static void updateData(){
-        String[] columnNames = {"Player", "HighScore"};
-        //GameDBManager.updateRecords(gameState.getGameState().getPlayer(), false);
-//        model = new DefaultTableModel(this.toDataArray(GameDBManager.getPlayerList()), (String[]){"Name", "Highscore"}){
-//            @Override
-//            public boolean isCellEditable(int row, int coloumn){
-//                // all cells are false;
-//                return false;
-//            }
-//        };
-        
+        String[] columnNames = {"Player", "HighScore"};        
         model = new DefaultTableModel(toDataArray(GameDBManager.getPlayerList()), columnNames){
             @Override
             public boolean isCellEditable(int row, int coloumn){
@@ -186,6 +170,41 @@ public class HighscorePanel extends JPanel implements Observer{
             }
         };
         table.setModel(model);
+    }
+    
+        private class moneyPanels extends JPanel implements ActionListener{
+        private final MoneyRain[] moneyRain;
+        private final int height, width;
+        private final Timer moneyTimer;
+        
+        public moneyPanels(int width, int height){
+            this.height = height;
+            this.width = width;
+            super.setPreferredSize(new Dimension(width, height));
+            super.setBackground(Color.black);
+            
+            moneyTimer = new Timer(10, this);
+            moneyTimer.start();
+        
+            moneyRain = new MoneyRain[10];
+            for (int i = 0; i < 10; i++) {
+                moneyRain[i] = new MoneyRain(this.width, this.height, "$");
+            }
+        }
+        @Override
+        public void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            for (MoneyRain m : moneyRain) {
+                m.drawMoney(g);
+            }
+        }
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            for (MoneyRain m : moneyRain) {
+                m.moveMoney();
+            }
+            super.repaint();
+        }
     }
 }
 
