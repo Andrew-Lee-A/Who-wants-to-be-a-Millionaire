@@ -27,9 +27,7 @@ public class HighscoreController extends Observable implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == highScoreView.getButton("back")){
-            System.out.println("back button pressed");
-            modelSelection = "main menu";
-            
+            modelSelection = "main menu";           
             this.setChanged();
             this.notifyObservers();
         }

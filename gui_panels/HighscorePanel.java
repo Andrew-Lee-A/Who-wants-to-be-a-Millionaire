@@ -30,10 +30,11 @@ import player.Player;
  * @author Andrew Lee 17983766
  */
 public class HighscorePanel extends JPanel implements Observer{
-
+    public static String[][]data;
+    public static DefaultTableModel model;
     private final JButton back;
     private final GameState gameState;
-    private final JTable table;
+    private static JTable table;
     private ArrayList<Player> playerList;
     private final JLabel highscoreTitleLabel;
     private final JPanel highscoreTitlePanel;
@@ -67,7 +68,7 @@ public class HighscorePanel extends JPanel implements Observer{
 
         //Set up database data for JTable
         String[] columnNames = {"Player", "HighScore"};
-        String[][] data;
+        //data;
         playerList = GameDBManager.getPlayerList();
         data = toDataArray(playerList);
        
@@ -77,7 +78,7 @@ public class HighscorePanel extends JPanel implements Observer{
         tablePanel.setSize(600, 1000);
         
         //Set up table
-        DefaultTableModel model = new DefaultTableModel(data, columnNames){
+        model = new DefaultTableModel(toDataArray(GameDBManager.getPlayerList()), columnNames){
             @Override
             public boolean isCellEditable(int row, int coloumn){
                 // all cells are false;
@@ -166,16 +167,25 @@ public class HighscorePanel extends JPanel implements Observer{
         return data;
     }
     
-//    public static void updateData(){
-//        String[] columnNames = {"Player", "HighScore"};
-//        DefaultTableModel model = new DefaultTableModel(this.toDataArray(GameDBManager.getPlayerList()), columnNames){
+    public static void updateData(){
+        String[] columnNames = {"Player", "HighScore"};
+        //GameDBManager.updateRecords(gameState.getGameState().getPlayer(), false);
+//        model = new DefaultTableModel(this.toDataArray(GameDBManager.getPlayerList()), (String[]){"Name", "Highscore"}){
 //            @Override
 //            public boolean isCellEditable(int row, int coloumn){
 //                // all cells are false;
 //                return false;
 //            }
 //        };
-//        this.table.setModel(model);
-//    }
+        
+        model = new DefaultTableModel(toDataArray(GameDBManager.getPlayerList()), columnNames){
+            @Override
+            public boolean isCellEditable(int row, int coloumn){
+                // all cells are false;
+                return false;
+            }
+        };
+        table.setModel(model);
+    }
 }
 
