@@ -134,13 +134,14 @@ public class HighscorePanel extends JPanel implements Observer{
         throw new IllegalArgumentException("Invalid button name");
     }
     
+    
     /**
      * Transfer an arrayList of players into a 2d array with the player
      * name and highscore. Sort the array by the greatest scores 
      * @param playerList
      * @return 2d array of playername and highscore
      */
-    private String[][] toDataArray(ArrayList<Player> playerList){
+    private static String[][] toDataArray(ArrayList<Player> playerList){
         // Transfer the arraylist of players into a 2d array named 
         // data. Fill with player names and corresponding highscore
         String[][] data = new String[playerList.size()][2];
@@ -164,5 +165,17 @@ public class HighscorePanel extends JPanel implements Observer{
         
         return data;
     }
+    
+//    public static void updateData(){
+//        String[] columnNames = {"Player", "HighScore"};
+//        DefaultTableModel model = new DefaultTableModel(this.toDataArray(GameDBManager.getPlayerList()), columnNames){
+//            @Override
+//            public boolean isCellEditable(int row, int coloumn){
+//                // all cells are false;
+//                return false;
+//            }
+//        };
+//        this.table.setModel(model);
+//    }
 }
 

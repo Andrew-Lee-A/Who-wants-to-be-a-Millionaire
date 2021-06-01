@@ -5,6 +5,7 @@
  */
 package controllers;
 
+import game_db.GameDBManager;
 import gui_panels.HighscorePanel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,6 +29,7 @@ public class HighscoreController extends Observable implements ActionListener{
         if (e.getSource() == highScoreView.getButton("back")){
             System.out.println("back button pressed");
             modelSelection = "main menu";
+            
             this.setChanged();
             this.notifyObservers();
         }

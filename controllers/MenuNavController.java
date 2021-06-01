@@ -1,8 +1,10 @@
 package controllers;
 
+import game_db.GameDBManager;
 import gui_panels.MainMenuPanel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
 import java.util.Observable;
 
 /**
@@ -33,7 +35,11 @@ public class MenuNavController extends Observable implements ActionListener {
             this.notifyObservers();
         } else if (e.getSource() == menuView.getButton("highscores")){
             //Andrew TODO:
+            //GameDBManager.updateRecords(menuView.getGameState().getPlayer(), false);
+            //menuView.get
             modelSelection = "highscores";
+            //System.out.println(menuView.getGameState().getPlayer().getCurrentHighscore());
+            
             this.setChanged();
             this.notifyObservers();
         } else if (e.getSource() == menuView.getButton("rules")){

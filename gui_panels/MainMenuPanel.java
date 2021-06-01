@@ -104,6 +104,10 @@ public class MainMenuPanel extends JPanel implements Observer, ActionListener {
         super.repaint();
     }
     
+    public GameState getGameState(){
+        return this.gameState;
+    }
+    
      /**
      * takes a string and returns the related button
      * @param btnName, a string either play, highscores, rules or exit
